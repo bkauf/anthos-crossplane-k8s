@@ -6,7 +6,7 @@ metadata:
   name: multi-k8s
 spec:
   controller:
-    image: "gcr.io/anthos-multi-cloud-335819/crossplane-mc-k8s:v0.1"
+    image: "us-east1-docker.pkg.dev/anthos-multi-cloud-335819/anthos-crossplane-k8s/package:v0.1"
   crossplane:
     version: ">=v1.4.0-0"
   dependsOn:

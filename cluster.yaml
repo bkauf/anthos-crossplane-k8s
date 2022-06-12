@@ -1,0 +1,19 @@
+apiVersion: devopstoolkitseries.com/v1alpha1
+kind: CompositeKubernetesCluster
+metadata:
+  name: team-a
+  labels:
+    cluster-owner: bkauf
+spec:
+  compositionRef:
+    # Possible values cluster-google, cluster-azure, cluster-aws
+    name: cluster-aws
+  parameters:
+    # Possible values small, medium, large
+    nodeSize: small
+    version: "1.21"
+    minNodeCount: 2
+  writeConnectionSecretToRef:
+    namespace: a-team
+    name: cluster
+    
