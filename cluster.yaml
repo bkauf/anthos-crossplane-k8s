@@ -1,7 +1,7 @@
-apiVersion: devopstoolkitseries.com/v1alpha1
+apiVersion: bkauf.com/v1
 kind: CompositeKubernetesCluster
 metadata:
-  name: team-a
+  name: a-team
   labels:
     cluster-owner: bkauf
 spec:
@@ -12,7 +12,7 @@ spec:
     # Possible values small, medium, large
     nodeSize: small
     version: "1.21"
-    minNodeCount: 2
+    #minNodeCount: 2
   writeConnectionSecretToRef:
     namespace: a-team
     name: cluster

@@ -1,18 +1,42 @@
-
-
-#### Build Image
+#### Troubleshooting
 ```sh
-kubectl crossplane build configuration
+kubectl get events -n <namespace> --sort-by={'lastTimestamp'}
 ```
 
-#### Push to Docker Registry
+### Install Crossplane
 ```sh
-VERSION=v0.1
-kubectl crossplane push configuration us-east1-docker.pkg.dev/anthos-multi-cloud-335819/anthos-crossplane-k8s/package:c
+kubectl create namespace team-a
+
+helm repo add crossplane-stable \
+    https://charts.crossplane.io/stable
+
+helm repo update
+
+helm upgrade --install \
+    crossplane crossplane-stable/crossplane \
+    --namespace crossplane-system \
+    --create-namespace \
+    --wait
 ```
+
+#### Create Secrets
+AWS
+```sh
+kubectl --namespace crossplane-system \
+    create secret generic aws-creds \
+    --from-file creds=./aws-creds.conf
+```
+### After Package has been built
+#### Apply configuration
+```sh
+kubectl apply -f crossplane.yaml
+kubectl apply -f provider-default-aws.yaml
+```
+
 
 
 #### Install configuration
 ```sh
-kubectl crossplane install configuration us-east1-docker.pkg.dev/anthos-multi-cloud-335819/anthos-crossplane-k8s/package:${VERSION}
+kubectl create ns a-team
+kubectl apply -f cluster.yaml
 ```

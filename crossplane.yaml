@@ -1,18 +1,9 @@
-#Defines the relationships between packages /
-# dependencies and with providers how to run controllers
-apiVersion: meta.pkg.crossplane.io/v1
+apiVersion: pkg.crossplane.io/v1
 kind: Configuration
 metadata:
-  name: multi-k8s
+  name: anthos-aws-azure-gcp
 spec:
-  controller:
-    image: "us-east1-docker.pkg.dev/anthos-multi-cloud-335819/anthos-crossplane-k8s/package:v0.1"
-  crossplane:
-    version: ">=v1.4.0-0"
-  dependsOn:
-    - provider: crossplane/provider-aws
-      version: ">=v0.18.2"
-    - provider: crossplane/provider-gcp
-      version: ">=v0.13.0"
-    - provider: crossplane/provider-azure
-      version: ">=v0.13.0"
+  package: us-east1-docker.pkg.dev/anthos-multi-cloud-335819/anthos-crossplane-k8s/package:v0.8
+  packagePullPolicy: Always
+  revisionActivationPolicy: Automatic
+  revisionHistoryLimit: 1
