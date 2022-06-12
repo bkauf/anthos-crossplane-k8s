@@ -1,18 +1,18 @@
 apiVersion: bkauf.com/v1
 kind: CompositeKubernetesCluster
 metadata:
-  name: b-team
+  name: a-team
   labels:
     cluster-owner: bkauf
 spec:
   compositionRef:
     # Possible values cluster-google, cluster-azure, cluster-aws
-    name: cluster-google
+    name: cluster-aws
   parameters:
     # Possible values small, medium, large
     nodeSize: medium
     version: "1.22"
     #minNodeCount: 2
   writeConnectionSecretToRef:
-    namespace: b-team
+    namespace: a-team
     name: cluster
