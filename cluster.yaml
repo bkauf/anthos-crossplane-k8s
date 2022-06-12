@@ -16,4 +16,3 @@ spec:
   writeConnectionSecretToRef:
     namespace: a-team
     name: cluster
-    
