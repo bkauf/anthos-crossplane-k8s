@@ -1,14 +1,14 @@
 apiVersion: apiextensions.crossplane.io/v1
 kind: Composition
 metadata:
-  name: cluster-google
+  name: cluster-gcp
   labels:
     provider: google
     cluster: gke
 spec:
   compositeTypeRef:
     apiVersion: bkauf.com/v1
-    kind: CompositeKubernetesCluster
+    kind: cluster
   patchSets:
   - name: metadata
     patches:
@@ -16,9 +16,9 @@ spec:
   resources:
   - name: gkecluster
     base:
-      apiVersion: container.gcp.crossplane.io/v1beta1
-      kind: GKECluster
-      spec:
+      apiVersion: container.gcp.crossplane.io/v1beta2
+      kind: Cluster
+      spec:f
         forProvider:
           location: us-east1
           masterAuth:

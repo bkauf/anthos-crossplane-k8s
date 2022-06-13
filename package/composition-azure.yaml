@@ -8,7 +8,7 @@ metadata:
 spec:
   compositeTypeRef:
     apiVersion: bkauf.com/v1
-    kind: CompositeKubernetesCluster
+    kind: Cluster
   patchSets:
   - name: metadata
     patches:

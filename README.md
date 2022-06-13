@@ -39,18 +39,45 @@ aws_secret_access_key = $AWS_SECRET_ACCESS_KEY
 kubectl --namespace crossplane-system \
     create secret generic aws-creds \
     --from-file creds=./aws-creds.conf
-```
-### After Package has been built
-#### Apply configuration
-```sh
-kubectl apply -f crossplane.yaml
 kubectl apply -f provider-default-aws.yaml
+
 ```
 
-#### Install configuration
+GCP 
+
 ```sh
+kubectl --namespace crossplane-system \
+    create secret generic gcp-creds \
+    --from-file creds=./gcp-creds.json
+
+
+    ```
+### After Package has been built
+Either
+```sh
+kubectl crossplane install provider \
+    crossplane/provider-gcp:v0.21.0
+kubectl crossplane install provider \
+    crossplane/provider-aws:v0.19.0
+kubectl apply -f package/composition-aws.yaml
+kubectl apply -f package/composition-gcp.yaml
+kubectl apply -f package/xrd.yaml 
+
+```
+#### Install Provider configurations
+```sh
+kubectl apply -f provider-default-aws.yaml
 kubectl create ns a-team
-kubectl apply -f cluster.yaml
+kubectl apply -f cluster-aws.yaml
+```
+
+#### Install GCP Config
+```sh
+kubectl crossplane install provider \
+    crossplane/provider-gcp:v0.21.0
+kubectl apply -f provider-default-gcp.yaml
+kubectl create ns b-team
+kubectl apply -f cluster-gcp.yaml
 ```
 
 #### Access Infrastructure

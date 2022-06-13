@@ -1,12 +1,12 @@
 apiVersion: bkauf.com/v1
-kind: CompositeKubernetesCluster
+kind: cluster
 metadata:
   name: b-team
   labels:
     cluster-owner: bkauf
 spec:
   compositionRef:
-    # Possible values cluster-google, cluster-azure, cluster-aws
+    # Possible values cluster-gocp, cluster-azure, cluster-aws
     name: cluster-google
   parameters:
     # Possible values small, medium, large
