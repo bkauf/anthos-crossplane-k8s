@@ -18,7 +18,7 @@ spec:
     base:
       apiVersion: container.gcp.crossplane.io/v1beta2
       kind: Cluster
-      spec:f
+      spec:
         forProvider:
           location: us-east1
           masterAuth:
@@ -64,14 +64,14 @@ spec:
           clusterSelector:
             matchControllerRef: true
           config:
-            preemptible: true
+            preemptible: false
             oauthScopes:
             - https://www.googleapis.com/auth/cloud-platform
           autoscaling:
             enabled: true
             maxNodeCount: 3
           management:
-            autoRepair: true
+            autoRepair: false
             autoUpgrade: false
     patches:
     - type: PatchSet

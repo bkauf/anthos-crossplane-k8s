@@ -49,11 +49,19 @@ GCP
 kubectl --namespace crossplane-system \
     create secret generic gcp-creds \
     --from-file creds=./gcp-creds.json
+```
+
+or if you created a package
+```sh
+kubectl crossplane install configuration [link to OCI image]
+
+```
 
 
-    ```
+```
 ### After Package has been built
 Either
+
 ```sh
 kubectl crossplane install provider \
     crossplane/provider-gcp:v0.21.0
