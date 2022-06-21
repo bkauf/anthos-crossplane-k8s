@@ -87,6 +87,50 @@ kubectl apply -f provider-default-gcp.yaml
 kubectl create ns b-team
 kubectl apply -f cluster-gcp.yaml
 ```
+#### Install Azure
+
+```sh
+
+az ad sp create-for-rbac \
+    --sdk-auth \
+    --role Owner \
+    | tee azure-creds.json
+
+export AZURE_CLIENT_ID=$(\
+    cat azure-creds.json \
+    | grep clientId \
+    | cut -c 16-51)
+
+export RW_ALL_APPS=1cda74f2-2616-4834-b122-5cb1b07f8a59
+
+export RW_DIR_DATA=78c8a3c8-a07e-4b9e-af1b-b5ccab50a175
+
+export AAD_GRAPH_API=00000002-0000-0000-c000-000000000000
+
+az ad app permission add \
+    --id "${AZURE_CLIENT_ID}" \
+    --api ${AAD_GRAPH_API} \
+    --api-permissions \
+    ${RW_ALL_APPS}=Role \
+    ${RW_DIR_DATA}=Role
+
+az ad app permission grant \
+    --id "${AZURE_CLIENT_ID}" \
+    --api ${AAD_GRAPH_API} \
+    --expires never
+
+az ad app permission admin-consent \
+    --id "${AZURE_CLIENT_ID}"
+kubectl crossplane install provider \
+    crossplane/provider-azure:v0.16.1
+
+
+kubectl --namespace crossplane-system \
+    create secret generic azure-creds \
+    --from-file creds=./azure-creds.json
+
+```
+
 
 #### Access Infrastructure
 ```sh
