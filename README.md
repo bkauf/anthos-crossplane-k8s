@@ -7,7 +7,7 @@ kubectl get events -n <namespace> --sort-by={'lastTimestamp'}
 
 ### Install Crossplane
 ```sh
-kubectl create namespace team-a
+kubectl create namespace a-team
 
 helm repo add crossplane-stable \
     https://charts.crossplane.io/stable

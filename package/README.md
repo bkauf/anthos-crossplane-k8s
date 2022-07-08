@@ -31,3 +31,15 @@ or upgrade configuration
 ```sh
 kubectl crossplane update configuration anthos-aws-azure-gcp v0.9
 ```
+
+
+# Find the name of your Provider object.
+```sh
+kubectl get provider.pkg
+```
+# Patch it with the new version. Make sure you use the latest patch release of
+# v0.22.x
+```
+export PROVIDER_NAME=[provider name]
+kubectl patch provider.pkg $PROVIDER_NAME -p '{"spec":{"package": "crossplane/provider-aws:v0.19.0"}}' --type=merge
+```

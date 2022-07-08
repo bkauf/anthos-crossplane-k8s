@@ -8,7 +8,7 @@ metadata:
 spec:
   compositeTypeRef:
     apiVersion: bkauf.com/v1
-    kind: Cluster
+    kind: cluster
   patchSets:
   - name: metadata
     patches:
@@ -31,9 +31,11 @@ spec:
       spec:
         location: eastus
         dnsNamePrefix: docatalog
-        version: "1.20.7"
+        version: "1.22.6"
         nodeCount: 1
         nodeVMSize: Standard_D2_v2
+        providerConfigRef:
+          name: default-azure
     patches:
     - fromFieldPath: metadata.labels.resourcegroup
       toFieldPath: spec.resourceGroupNameRef.name
