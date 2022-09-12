@@ -1,19 +1,17 @@
 apiVersion: apiextensions.crossplane.io/v1
 kind: CompositeResourceDefinition
 metadata:
-  name: clusters.bkauf.com
+  name: compositeclusters.demo.anthos.com
 spec:
   connectionSecretKeys:
   - kubeconfig
-  defaultCompositionRef:
-    name: cluster-aws
-  group: bkauf.com
+  group: demo.anthos.com
   names:
-    kind: cluster
-    plural: clusters
+    kind: CompositeCluster
+    plural: compositeclusters
   claimNames:
-    kind: KubernetesCluster
-    plural: kubernetesclusters
+    kind: Cluster
+    plural: clusters
   versions:
   - name: v1
     served: true
@@ -26,40 +24,52 @@ spec:
             type: object
             properties:
               parameters:
-                type: object
+                description: AttachedClusterParameters is the cluster configs.
                 properties:
-                  eksVersion:
-                    description: The kubernetes version to use
+                  #configSync:
+                  #  properties:
+                  #    branch:
+                  #      type: string
+                  #    policyDir:
+                  #      type: string
+                  #    repo:
+                  #      type: string
+                  #  required:
+                  #  - branch
+                  #  - policyDir
+                  #  - repo
+                  #  type: object
+                  adminUsers:
+                    items:
+                      type: string
+                    type: array
+                  fleetProject:
                     type: string
-                    default: "1.22"
-                  version:
-                    description: The Kubernetes version for the cluster.
-                    type: string
-                  nodeSize:
-                    description: The size of the nodes; small, medium, large
+                  k8sVersion:
                     type: string
                   minNodeCount:
-                    description: The minimum number of nodes
                     type: integer
-                    default: 1
-                required:
-                - nodeSize
-            required:
-            - parameters
+                  nodeSize:
+                    type: string
+                type: object
           status:
             type: object
+            description: A AttachedClusterStatus represents the observed state of
+              a Cluster.
             properties:
-              clusterName:
-                description: The name of the cluster
-                type: string
               cluster:
-                description: The name of the cluster
+                type: string
+              clusterName:
+                type: string
+              clusterSelfLink:
                 type: string
               controlPlaneStatus:
-                description: The status of the control plane
+                type: string
+              membershipId:
                 type: string
               nodePoolStatus:
-                description: The status of the node pool
+                type: string
+              odicIssuerUrl:
                 type: string
     additionalPrinterColumns:
     - name: clusterName
