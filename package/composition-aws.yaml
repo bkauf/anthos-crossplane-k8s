@@ -3,12 +3,13 @@ kind: Composition
 metadata:
   name: cluster-aws
   labels:
+    crossplane.io/xrd: compositeclusters.demo.anthos.com
     provider: aws
     cluster: eks
 spec:
   compositeTypeRef:
-    apiVersion: bkauf.com/v1
-    kind: cluster
+    apiVersion: demo.anthos.com/v1
+    kind:  CompositeCluster
   patchSets:
   - name: metadata
     patches:
@@ -18,25 +19,34 @@ spec:
     base:
       apiVersion: eks.aws.crossplane.io/v1beta1
       kind: Cluster
+      metadata:
+        name: testeks
+        labels:
+          cluster: testeks
       spec:
-        providerConfigRef: 
+        providerConfigRef:
           name: default-aws
         forProvider:
           region: us-east-1
-          version: "1.20"
+          version: "1.23"
+          resourcesVpcConfig:
+            endpointPublicAccess: true
+            subnetIdSelector:
+              matchControllerRef: true
           roleArnSelector:
             matchControllerRef: true
             matchLabels:
               role: controlplane
-          resourcesVpcConfig:
-            endpointPrivateAccess: true
-            endpointPublicAccess: true
-            subnetIdSelector:
-              matchControllerRef: true
+        writeConnectionSecretToRef:
+          name: cluster-conn
+          namespace: default
     patches:
+    - type: ToCompositeFieldPath
+      fromFieldPath: status.atProvider.identity.oidc.issuer
+      toFieldPath: status.odicIssuerUrl
     - fromFieldPath: metadata.annotations[crossplane.io/external-name]
       toFieldPath: metadata.annotations[crossplane.io/external-name]
-    - fromFieldPath: spec.parameters.version
+    - fromFieldPath: spec.parameters.k8sVersion
       toFieldPath: spec.forProvider.version
     - fromFieldPath: metadata.uid
       toFieldPath: spec.writeConnectionSecretToRef.name
@@ -77,9 +87,9 @@ spec:
             matchLabels:
               access: public
           scalingConfig:
-            minSize: 1
+            minSize: 3
             maxSize: 10
-            desiredSize: 1
+            desiredSize: 3
           instanceTypes:
             - t3.small
     patches:
@@ -104,8 +114,8 @@ spec:
       matchString: ACTIVE
   - name: iamrole-controlplane
     base:
-      apiVersion: identity.aws.crossplane.io/v1beta1
-      kind: IAMRole
+      apiVersion: iam.aws.crossplane.io/v1beta1
+      kind: Role
       metadata:
         labels:
           role: controlplane
@@ -132,8 +142,8 @@ spec:
             }
   - name: iamrole-nodegroup
     base:
-      apiVersion: identity.aws.crossplane.io/v1beta1
-      kind: IAMRole
+      apiVersion: iam.aws.crossplane.io/v1beta1
+      kind: Role
       metadata:
         labels:
           role: nodegroup
@@ -160,8 +170,11 @@ spec:
             }
   - name: iamattachment-controlplane
     base:
-      apiVersion: identity.aws.crossplane.io/v1beta1
-      kind: IAMRolePolicyAttachment
+      apiVersion: iam.aws.crossplane.io/v1beta1
+      kind: RolePolicyAttachment
+      metadata:
+        labels:
+          access: public
       spec:
         providerConfigRef: 
           name: default-aws
@@ -173,8 +186,8 @@ spec:
               role: controlplane
   - name: iamattachment-service
     base:
-      apiVersion: identity.aws.crossplane.io/v1beta1
-      kind: IAMRolePolicyAttachment
+      apiVersion: iam.aws.crossplane.io/v1beta1
+      kind: RolePolicyAttachment
       spec:
         providerConfigRef: 
           name: default-aws
@@ -186,8 +199,8 @@ spec:
               role: controlplane
   - name: iamattachment-worker
     base:
-      apiVersion: identity.aws.crossplane.io/v1beta1
-      kind: IAMRolePolicyAttachment
+      apiVersion: iam.aws.crossplane.io/v1beta1
+      kind: RolePolicyAttachment
       spec:
         providerConfigRef: 
           name: default-aws
@@ -199,8 +212,8 @@ spec:
               role: nodegroup
   - name: iamattachment-cni
     base:
-      apiVersion: identity.aws.crossplane.io/v1beta1
-      kind: IAMRolePolicyAttachment
+      apiVersion: iam.aws.crossplane.io/v1beta1
+      kind: RolePolicyAttachment
       spec:
         providerConfigRef: 
           name: default-aws
@@ -212,8 +225,8 @@ spec:
               role: nodegroup
   - name: iamattachment-registry
     base:
-      apiVersion: identity.aws.crossplane.io/v1beta1
-      kind: IAMRolePolicyAttachment
+      apiVersion: iam.aws.crossplane.io/v1beta1
+      kind: RolePolicyAttachment 
       spec:
         providerConfigRef: 
           name: default-aws
@@ -368,3 +381,80 @@ spec:
                 matchLabels:
                   zone: us-east-1c
                   access: public
+  - name: attachedCluster
+    base:
+      apiVersion: anthos.gcp.crossplane.io/v1alpha1
+      kind: AttachedCluster
+      spec:
+        providerConfigRef: 
+          name: default-gcp
+        forProvider:
+          location: us-east4
+          distribution: eks
+          clusterCredentials:
+            source: Secret
+            secretRef:
+              namespace: default
+              key: kubeconfig
+    patches:
+    - type: ToCompositeFieldPath
+      fromFieldPath: status.atProvider.membershipId
+      toFieldPath: status.membershipId
+    - fromFieldPath: spec.parameters.adminUsers
+      toFieldPath: spec.forProvider.adminUsers
+    - fromFieldPath: spec.parameters.fleetProject
+      toFieldPath: spec.forProvider.fleet.project
+      transforms:
+        - type: string
+          string:
+            fmt: "projects/%s"
+    - fromFieldPath: status.odicIssuerUrl
+      toFieldPath: spec.forProvider.authority.issuerUrl
+    - fromFieldPath: spec.parameters.k8sVersion
+      toFieldPath: spec.forProvider.platformVersion
+      transforms:
+        - type: map
+          map:
+            1.23: 1.23.0-gke.1
+    - fromFieldPath: "metadata.uid"
+      toFieldPath: spec.forProvider.clusterCredentials.secretRef.name
+      transforms:
+        - type: string
+          string:
+            fmt: "%s-ekscluster"
+  - name: feature
+    base:
+      apiVersion: anthos.gcp.crossplane.io/v1alpha1
+      kind: HubFeature
+      spec:
+        providerConfigRef:
+          name: default-gcp
+        forProvider:
+          location: global
+          featureName: configmanagement
+  - name: configSync
+    base:
+      apiVersion: anthos.gcp.crossplane.io/v1alpha1
+      kind: HubFeatureMembership
+      spec:
+        providerConfigRef:
+          name: default-gcp
+        forProvider:
+          location: global
+          feature: configmanagement
+          configManagement:
+            version: "1.12.0"
+            git:
+              secretType: none
+              repo: https://github.com/bkauf/anthos-crossplane-demo.git
+              policyDir: cluster-acm/
+              branch: master
+    patches:
+    - fromFieldPath: status.membershipId
+      toFieldPath: spec.forProvider.membership
+   # - fromFieldPath: spec.parameters.configSync.branch
+   #   toFieldPath: spec.forProvider.configManagement.git.branch
+   # - fromFieldPath: spec.parameters.configSync.repo
+   #   toFieldPath: spec.forProvider.configManagement.git.repo
+   # - fromFieldPath: spec.parameters.configSync.policyDir
+   #   toFieldPath: spec.forProvider.configManagement.git.policyDir
