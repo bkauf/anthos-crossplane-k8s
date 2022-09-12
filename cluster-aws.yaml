@@ -1,9 +1,9 @@
-apiVersion: bkauf.com/v1
-kind: cluster
+apiVersion: demo.anthos.com/v1
+kind: CompositeCluster 
 metadata:
   name: a-team
   labels:
-    cluster-owner: bkauf
+    cluster-owner: prod-cluster
 spec:
   compositionRef:
     # Possible values cluster-gcp, cluster-azure, cluster-aws
@@ -11,8 +11,11 @@ spec:
   parameters:
     # Possible values small, medium, large
     nodeSize: medium
-    version: "1.22"
-    #minNodeCount: 2
+    k8sVersion: "1.23"
+    fleetProject: "261832825633"
+    minNodeCount: 3  
+    adminUsers:
+    - bkauf@google.com
   writeConnectionSecretToRef:
-    namespace: a-team
-    name: cluster
+    namespace: default
+    name: a-team
