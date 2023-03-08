@@ -1,0 +1,29 @@
+apiVersion: container.gcp.crossplane.io/v1beta1
+kind: NodePool
+metadata:
+  name: bkauf-pool-2
+spec:
+  providerConfigRef:
+    name: default-gcp
+  forProvider:
+    #cluster: projects/anthos-multi-cloud-335819/locations/us-east1/clusters/bkauf-cluster-hxw4f	
+    clusterRef:
+      #matchControllerRef: true //bkauf-cluster-hxw4f
+      name: bkauf-cluster-hxw4f
+    config:
+      machineType: n1-standard-1
+      diskSizeGb: 120
+      diskType: pd-ssd
+      imageType: cos_containerd
+      labels:
+        test-label: crossplane-created
+      oauthScopes:
+      - "https://www.googleapis.com/auth/devstorage.read_only"
+      - "https://www.googleapis.com/auth/logging.write"
+      - "https://www.googleapis.com/auth/monitoring"
+      - "https://www.googleapis.com/auth/servicecontrol"
+      - "https://www.googleapis.com/auth/service.management.readonly"
+      - "https://www.googleapis.com/auth/trace.append"      
+    initialNodeCount: 3
+    locations:
+      - "us-east1-b"
