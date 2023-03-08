@@ -2,7 +2,7 @@
 
 #### Troubleshooting
 ```sh
-kubectl get events -n <namespace> --sort-by={'lastTimestamp'}
+kubectl get events -n default --sort-by={'lastTimestamp'}
 ```
 
 ### Install Crossplane

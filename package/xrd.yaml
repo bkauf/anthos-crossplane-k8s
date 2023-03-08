@@ -9,7 +9,7 @@ spec:
   names:
     kind: CompositeCluster
     plural: compositeclusters
-  claimNames:
+  claimNames: # this is what namespace scoped XRCs are called
     kind: Cluster
     plural: clusters
   versions:

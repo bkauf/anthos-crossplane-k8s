@@ -6,10 +6,9 @@ spec:
   providerConfigRef:
     name: default-gcp
   forProvider:
-    #cluster: projects/anthos-multi-cloud-335819/locations/us-east1/clusters/bkauf-cluster-hxw4f	
+    #cluster: projects/anthos-multi-cloud-335819/locations/us-east1/clusters/test-cluster-q42wh	
     clusterRef:
-      #matchControllerRef: true //bkauf-cluster-hxw4f
-      name: bkauf-cluster-hxw4f
+      name: test-cluster-q42wh
     config:
       machineType: n1-standard-1
       diskSizeGb: 120
