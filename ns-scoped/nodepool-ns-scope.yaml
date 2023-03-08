@@ -1,0 +1,15 @@
+apiVersion: demo.anthos.com/v1
+kind: NodePool
+metadata:
+  name: test-nodepool
+  labels:
+    cluster-owner: bkauf
+spec:
+  compositionRef:
+    # Possible values gcp-node-pool
+    name: gcp-node-pool
+  parameters:
+    clusterName: "test-cluster-fd9rt-kcnxh"
+    # Possible values small, medium, large
+    nodeSize: medium
+    minNodeCount: 3

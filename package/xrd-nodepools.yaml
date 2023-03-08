@@ -1,0 +1,48 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: compositenodepools.demo.anthos.com
+spec:
+  connectionSecretKeys:
+  - kubeconfig
+  group: demo.anthos.com
+  names:
+    kind: CompositeNodepool
+    plural: compositenodepools
+  claimNames: # this is what namespace scoped XRCs are called
+    kind: NodePool
+    plural: nodepools
+  versions:
+  - name: v1
+    served: true
+    referenceable: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              parameters:
+                description: "Parameters for creating a new node pool"
+                properties:
+                  clusterName:
+                    type: string
+                  minNodeCount:
+                    type: integer
+                  nodeSize:
+                    type: string
+                type: object
+          status:
+            type: object
+            description: "NodePool Status"
+            properties:
+              nodePoolStatus:
+                type: string
+    additionalPrinterColumns:
+    - name: nodePoolName
+      type: string
+      jsonPath: ".status.clusterName"
+    - name: nodePool
+      type: string
+      jsonPath: ".status.nodePoolStatus"
