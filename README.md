@@ -60,13 +60,24 @@ kubectl crossplane install configuration [link to OCI image]
 
 ```
 ### After Package has been built
-Either
+#### Apply the Providers 
+```sh
+kubectl apply -f providers/gcp.yaml
+```
+Apply the provider Configs 
+```sh
+kubectl apply -f providers/gcp-providerconfig.yaml
+```
+
+####Apply the Compositions
+
+GKE on GCP
+```sh
+kubectl apply -f compositions/gcp-gke.yaml
+kubectl apply -f compositions/gcp--gke-nodepool.yaml
+```
 
 ```sh
-kubectl crossplane install provider \
-    crossplane/provider-gcp:v0.21.0
-kubectl crossplane install provider \
-    crossplane/provider-aws:v0.19.0
 kubectl apply -f package/composition-aws.yaml
 kubectl apply -f package/composition-gcp.yaml
 kubectl apply -f package/xrd.yaml 

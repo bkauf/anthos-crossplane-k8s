@@ -6,13 +6,13 @@ metadata:
     cluster-owner: bkauf
 spec:
   compositionRef:
-    # Possible values cluster-gcp, cluster-azure, cluster-aws
-    name: cluster-gcp
+    # Possible values cluster-gcp-up, cluster-azure, cluster-aws
+    name: cluster-aws-eks
   parameters:
     # Possible values small, medium, large
-    nodeSize: medium
+    nodeSize: small
     k8sVersion: "1.24"
     fleetProject: "261832825633"
-    minNodeCount: 3
+    minNodeCount: 2
     adminUsers:
     - bkauf@google.com  

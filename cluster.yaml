@@ -1,16 +1,16 @@
 apiVersion: demo.anthos.com/v1
 kind: CompositeCluster 
 metadata:
-  name: test-cluster
+  name: upbound-cluster
   labels:
     cluster-owner: prod-cluster-2
 spec:
   compositionRef:
-    # Possible values cluster-gcp, cluster-azure, cluster-aws
-    name: cluster-gcp
+    # Possible values cluster-gcp-up, cluster-azure, cluster-aws
+    name: cluster-gcp-up
   parameters:
     # Possible values small, medium, large
-    nodeSize: medium
+    nodeSize: small
     k8sVersion: "1.24"
     fleetProject: "261832825633"
     minNodeCount: 3
