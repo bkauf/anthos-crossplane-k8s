@@ -91,7 +91,7 @@ kubectl apply -f package/xrd-nodepools.yaml
 ```sh
 kubectl apply -f claims/cluster.yaml
 ```
-#### Install Azure
+#### Install Azure(Not working right now)
 
 ```sh
 
