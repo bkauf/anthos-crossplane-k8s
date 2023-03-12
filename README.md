@@ -24,7 +24,7 @@ helm upgrade --install \
 #### Create Secrets
 
 
-*GCP*
+**GCP**
 You will need to export a service acount key with owner project permissions 
 
 ```sh
@@ -33,7 +33,7 @@ kubectl --namespace crossplane-system \
     --from-file creds=./gcp-creds.json
 ```
 
-AWS
+**AWS**
 ```sh
 
 export AWS_ACCESS_KEY_ID=[...]
