@@ -20,27 +20,29 @@ spec:
       apiVersion:  eks.aws.upbound.io/v1beta1
       kind: Cluster
       metadata:
-        annotations:
-          meta.upbound.io/example-id: eks/v1beta1/addon
-          uptest.upbound.io/timeout: "2400"
+        name: eks-cluster
         labels:
-          testing.upbound.io/example-name: example
-        name: sample-eks-cluster
+         role: controlplane
       spec:
-    forProvider:
-      region: us-east-1
-      version: 1.24
-      roleArnRef:
-        name: sample-eks-cluster
-      vpcConfig:
-        - subnetIdSelector:
-            matchControllerRef: true    
+        providerConfigRef: 
+          name: default-aws
+        forProvider:
+          region: us-east-1
+          version: 1.24
+          roleArnSelector:
+            matchControllerRef: true
+          vpcConfig:
+            - subnetIdSelector:
+                matchControllerRef: true 
+              endpointPrivateAccesss: false
+              endpointPublicAccess: true 
+          writeConnectionSecretToRef:
+            name: kubeconfig
+            namespace: default  
     patches:
     - type: ToCompositeFieldPath
       fromFieldPath: status.atProvider.identity.oidc.issuer
       toFieldPath: status.odicIssuerUrl
-    - fromFieldPath: metadata.annotations[crossplane.io/external-name]
-      toFieldPath: metadata.annotations[crossplane.io/external-name]
     - fromFieldPath: spec.parameters.k8sVersion
       toFieldPath: spec.forProvider.version
     - type: ToCompositeFieldPath
@@ -51,51 +53,64 @@ spec:
       toFieldPath: status.controlPlaneStatus
     - fromFieldPath: spec.writeConnectionSecretToRef.namespace
       toFieldPath: spec.writeConnectionSecretToRef.namespace
-    readinessChecks:
-    - type: MatchString
-      fieldPath: status.atProvider.status
-      matchString: ACTIVE
+    - fromFieldPath: metadata.uid
+      toFieldPath: spec.writeConnectionSecretToRef.name
+      transforms:
+        - type: string
+          string:
+            fmt: "%s-ekscluster"
+  #   readinessChecks:
+  #   - type: MatchString
+  #     fieldPath: status.atProvider.status
+  #     matchString: ACTIVE
 
   - name: eksnodegroup
     base:
       apiVersion: eks.aws.upbound.io/v1beta1
       kind: NodeGroup
       metadata:
-        name: sample-eks-ng
+        name: eks-ng
       spec:
+        providerConfigRef: 
+          name: default-aws
         forProvider:
           clusterNameSelector:
             matchControllerRef: true
-          instanceTypes: t3.medium
-          nodeRoleArnRef:
-            name: sample-node-role
-          region: us-west-1
+           # matchLabels:
+           #   role: controlplane
+          #instanceTypes: t3.medium
+          nodeRoleArnSelector:
+            matchLabels: 
+              role: nodegroup
+          region: us-east-1
           scalingConfig:
             - desiredSize: 1
               maxSize: 6
               minSize: 1
           subnetIdSelector:
-            matchedControllerRef: true
+            matchLabels: 
+              role: nodegroup
+            #matchedControllerRef: true
     patches:
-    - fromFieldPath: spec.parameters.nodeSize
-      toFieldPath: spec.forProvider.instanceTypes[0]
-      transforms:
+      - fromFieldPath: spec.parameters.nodeSize
+        toFieldPath: spec.forProvider.instanceTypes[0]
+        transforms:
         - type: map
           map:
             small: t3.small
             medium: t3.medium
             large: t3.large
-    - fromFieldPath: spec.parameters.minNodeCount
-      toFieldPath: spec.forProvider.scalingConfig.minSize
-    - fromFieldPath: spec.parameters.minNodeCount
-      toFieldPath: spec.forProvider.scalingConfig.desiredSize
-    - type: ToCompositeFieldPath
-      fromFieldPath: status.atProvider.status
-      toFieldPath: status.nodePoolStatus
-    readinessChecks:
-    - type: MatchString
-      fieldPath: status.atProvider.status
-      matchString: ACTIVE
+    # - fromFieldPath: spec.parameters.minNodeCount
+    #   toFieldPath: spec.forProvider.scalingConfig.minSize
+    # - fromFieldPath: spec.parameters.minNodeCount
+    #   toFieldPath: spec.forProvider.scalingConfig.desiredSize
+    # - type: ToCompositeFieldPath
+    #   fromFieldPath: status.atProvider.status
+    #   toFieldPath: status.nodePoolStatus
+    # readinessChecks:
+    # - type: MatchString
+    #   fieldPath: status.atProvider.status
+    #   matchString: ACTIVE
   - name: iamrole-controlplane
     base:
       apiVersion: iam.aws.upbound.io/v1beta1
@@ -103,11 +118,12 @@ spec:
       metadata:
         labels:
           role: controlplane
+        name: controlplane
       spec:
         providerConfigRef: 
           name: default-aws
         forProvider:
-          assumeRolePolicyDocument: |
+          assumeRolePolicy: |
             {
               "Version": "2012-10-17",
               "Statement": [
@@ -124,6 +140,22 @@ spec:
                   }
               ]
             }
+          path: /
+
+  - name: iamattachment-controlplane
+    base:
+      apiVersion: iam.aws.upbound.io/v1beta1
+      kind: RolePolicyAttachment
+      metadata:
+        name: cluster-policy1
+      spec:
+        providerConfigRef: 
+          name: default-aws
+        forProvider:
+          policyArn: arn:aws:iam::aws:policy/AmazonEKSClusterPolicy
+          roleSelector:
+            matchLabels:
+              role: controlplane
   - name: iamrole-nodegroup
     base:
       apiVersion: iam.aws.upbound.io/v1beta1
@@ -131,11 +163,12 @@ spec:
       metadata:
         labels:
           role: nodegroup
+        name: nodegroup 
       spec:
         providerConfigRef: 
           name: default-aws
         forProvider:
-          assumeRolePolicyDocument: |
+          assumeRolePolicy: |
             {
               "Version": "2012-10-17",
               "Statement": [
@@ -152,78 +185,55 @@ spec:
                   }
               ]
             }
-  - name: iamattachment-controlplane
-    base:
-      apiVersion: iam.aws.upbound.io/v1beta1
-      kind: RolePolicyAttachment
-      metadata:
-        labels:
-          access: public
-      spec:
-        providerConfigRef: 
-          name: default-aws
-        forProvider:
-          policyArn: arn:aws:iam::aws:policy/AmazonEKSClusterPolicy
-          roleNameSelector:
-            matchControllerRef: true
-            matchLabels:
-              role: controlplane
-  - name: iamattachment-service
-    base:
-      apiVersion: iam.aws.upbound.io/v1beta1
-      kind: RolePolicyAttachment
-      spec:
-        providerConfigRef: 
-          name: default-aws
-        forProvider:
-          policyArn: arn:aws:iam::aws:policy/AmazonEKSServicePolicy
-          roleNameSelector:
-            matchControllerRef: true
-            matchLabels:
-              role: controlplane
+          path: /
   - name: iamattachment-worker
     base:
       apiVersion: iam.aws.upbound.io/v1beta1
       kind: RolePolicyAttachment
+      metadata:
+        name: node-policy1
       spec:
         providerConfigRef: 
           name: default-aws
         forProvider:
           policyArn: arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy
-          roleNameSelector:
-            matchControllerRef: true
+          roleSelector:
             matchLabels:
               role: nodegroup
   - name: iamattachment-cni
     base:
       apiVersion: iam.aws.upbound.io/v1beta1
       kind: RolePolicyAttachment
+      metadata:
+        name: node-policy2
       spec:
         providerConfigRef: 
           name: default-aws
         forProvider:
           policyArn: arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
-          roleNameSelector:
-            matchControllerRef: true
+          roleSelector:
             matchLabels:
               role: nodegroup
   - name: iamattachment-registry
     base:
       apiVersion: iam.aws.upbound.io/v1beta1
-      kind: RolePolicyAttachment 
+      kind: RolePolicyAttachment
+      metadata:
+        name: node-policy2 
       spec:
         providerConfigRef: 
           name: default-aws
         forProvider:
           policyArn: arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
-          roleNameSelector:
-            matchControllerRef: true
+          roleSelector:
             matchLabels:
               role: nodegroup
-  - name: vpc-nodepool
+  - name: vpc-eks
     base:
       apiVersion: ec2.aws.upbound.io/v1beta1
       kind: VPC
+      metadata:
+        name: sample-vpc
       spec:
         providerConfigRef: 
           name: default-aws
@@ -231,37 +241,22 @@ spec:
           region: us-east-1
           cidrBlock: 10.0.0.0/16
           tags:
-          - key: Name
-            value: devops-catalog
-          - key: kubernetes.io/cluster/devops-catalog
-            value: shared
-  - name: sc-nodepool
-    base:
-      apiVersion: ec2.aws.upbound.io/v1beta1
-      kind: SecurityGroup
-      spec:
-        providerConfigRef: 
-          name: default-aws
-        forProvider:
-          description: Cluster communication with worker nodes
-          groupName: devops-catalog
-          region: us-east-1
-          vpcIdSelector:
-            matchControllerRef: true
-          egress:
-          - fromPort: 0
-            toPort: 0
-            ipProtocol: "-1"
-            ipRanges:
-            - cidrIp: "0.0.0.0/0"
+            Name: sample-vpc
+    patches:
+    - type: ToCompositeFieldPath
+      fromFieldPath: metadata.annotations[crossplane.io/external-name]
+      toFieldPath: status.vpcId
+
   - name: subnet-nodepool-1a
     base:
       apiVersion: ec2.aws.upbound.io/v1beta1
       kind: Subnet
       metadata:
+        name: subnet-nodepool-1a
         labels:
           zone: us-east-1a
           access: public
+          role: nodegroup
       spec:
         providerConfigRef: 
           name: default-aws
@@ -271,20 +266,19 @@ spec:
           cidrBlock: 10.0.0.0/24
           vpcIdSelector:
             matchControllerRef: true
-          mapPublicIPOnLaunch: true
+          mapPublicIpOnLaunch: true
           tags:
-            - key: Name
-              value: devops-catalog
-            - key: kubernetes.io/cluster/devops-catalog
-              value: shared
+            Name: subnet-nodepool-1a
   - name: subnet-nodepool-1b
     base:
       apiVersion: ec2.aws.upbound.io/v1beta1
       kind: Subnet
       metadata:
+        name: subnet-nodepool-1b
         labels:
           zone: us-east-1b
           access: public
+          role: nodegroup
       spec:
         providerConfigRef: 
           name: default-aws
@@ -294,20 +288,19 @@ spec:
           cidrBlock: 10.0.1.0/24
           vpcIdSelector:
             matchControllerRef: true
-          mapPublicIPOnLaunch: true
+          mapPublicIpOnLaunch: true
           tags:
-            - key: Name
-              value: devops-catalog
-            - key: kubernetes.io/cluster/devops-catalog
-              value: shared
+            Name: subnet-nodepool-1b
   - name: subnet-nodepool-1c
     base:
       apiVersion: ec2.aws.upbound.io/v1beta1
       kind: Subnet
       metadata:
+        name: subnet-nodepool-1c
         labels:
           zone: us-east-1c
           access: public
+          role: nodegroup
       spec:
         providerConfigRef: 
           name: default-aws
@@ -317,16 +310,17 @@ spec:
           cidrBlock: 10.0.2.0/24
           vpcIdSelector:
             matchControllerRef: true
-          mapPublicIPOnLaunch: true
+          mapPublicIpOnLaunch: true
           tags:
-            - key: Name
-              value: devops-catalog
-            - key: kubernetes.io/cluster/devops-catalog
-              value: shared
-  - name: gateway
+            Name: subnet-nodepool-1c
+  - name: inet-gateway
     base:
       apiVersion: ec2.aws.upbound.io/v1beta1
       kind: InternetGateway
+      metadata:
+        name: routegw
+        labels:
+          name: routegw
       spec:
         providerConfigRef: 
           name: default-aws
@@ -334,34 +328,45 @@ spec:
           region: us-east-1
           vpcIdSelector:
             matchControllerRef: true
-  - name: routetable
+          tags:
+            Name: eks-cluster
+
+  - name: route-to-ig
     base:
-      apiVersion:  ec2.aws.upbound.io/v1beta1
-      kind: RouteTable
+      apiVersion: ec2.aws.upbound.io/v1beta1
+      kind: DefaultRouteTable
+      metadata:
+        name: routetoIG
+        labels:
+          name: defaultRouteTable
+      spec:
+        providerConfigRef: 
+          name: default-aws
+        forProvider:
+          defaultRouteTableIdSelector:
+            matchControllerRef: true
+          region: us-east-1
+          route:
+            - cidrBlock: 0.0.0.0/0
+              gatewayIdSelector:
+                matchControllerRef: true   
+  - name: RouteTableAssociation
+    base:
+      apiVersion: ec2.aws.upbound.io/v1beta1
+      kind: RouteTableAssociation
+      metadata:
+        labels:
+          testing.upbound.io/example-name: rta
+        name: rta
       spec:
         providerConfigRef: 
           name: default-aws
         forProvider:
           region: us-east-1
-          vpcIdSelector:
+          routeTableIdSelector:
             matchControllerRef: true
-          routes:
-            - destinationCidrBlock: 0.0.0.0/0
-              gatewayIdSelector:
-                matchControllerRef: true
-          associations:
-            - subnetIdSelector:
-                matchControllerRef: true
-                matchLabels:
-                  zone: us-east-1a
-                  access: public
-            - subnetIdSelector:
-                matchControllerRef: true
-                matchLabels:
-                  zone: us-east-1b
-                  access: public
-            - subnetIdSelector:
-                matchControllerRef: true
-                matchLabels:
-                  zone: us-east-1c
-                  access: public
+          subnetIdSelector:
+            matchControllerRef: true
+          gatewayIdSelector:
+            matchControllerRef: true
+

@@ -26,19 +26,6 @@ spec:
               parameters:
                 description: AttachedClusterParameters is the cluster configs.
                 properties:
-                  #configSync:
-                  #  properties:
-                  #    branch:
-                  #      type: string
-                  #    policyDir:
-                  #      type: string
-                  #    repo:
-                  #      type: string
-                  #  required:
-                  #  - branch
-                  #  - policyDir
-                  #  - repo
-                  #  type: object
                   adminUsers:
                     items:
                       type: string
@@ -69,7 +56,7 @@ spec:
                 type: string
               nodePoolStatus:
                 type: string
-              odicIssuerUrl:
+              vpcId:
                 type: string
     additionalPrinterColumns:
     - name: clusterName
@@ -81,3 +68,6 @@ spec:
     - name: nodePool
       type: string
       jsonPath: ".status.nodePoolStatus"
+    - name: vpcId
+      type: string
+      jsonPath: ".status.vpcId"

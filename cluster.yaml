@@ -2,12 +2,10 @@ apiVersion: demo.anthos.com/v1
 kind: CompositeCluster 
 metadata:
   name: upbound-cluster
-  labels:
-    cluster-owner: prod-cluster-2
 spec:
   compositionRef:
-    # Possible values cluster-gcp-up, cluster-azure, cluster-aws
-    name: cluster-gcp-up
+    # Possible values cluster-gcp-up, cluster-azure, cluster-aws-eks
+    name: cluster-aws-eks
   parameters:
     # Possible values small, medium, large
     nodeSize: small
