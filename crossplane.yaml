@@ -1,9 +1,9 @@
-apiVersion: pkg.crossplane.io/v1
-kind: Configuration
-metadata:
-  name: anthos-aws-azure-gcp
-spec:
-  package: us-east1-docker.pkg.dev/anthos-multi-cloud-335819/anthos-crossplane-k8s/package:v0.9
-  packagePullPolicy: Always
-  revisionActivationPolicy: Automatic
-  revisionHistoryLimit: 1
+# apiVersion: pkg.crossplane.io/v1
+# kind: Configuration
+# metadata:
+#   name: anthos-aws-azure-gcp
+# spec:
+#   package: us-east1-docker.pkg.dev/anthos-multi-cloud-335819/anthos-crossplane-k8s/package:v0.9
+#   packagePullPolicy: Always
+#   revisionActivationPolicy: Automatic
+#   revisionHistoryLimit: 1
