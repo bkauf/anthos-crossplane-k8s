@@ -4,7 +4,7 @@ metadata:
   name: upbound-cluster
 spec:
   compositionRef:
-    # Possible values cluster-gcp-up, cluster-azure, cluster-aws-eks
+    # Possible values cluster-gcp-gke, cluster-aws-eks
     name: cluster-aws-eks
   parameters:
     # Possible values small, medium, large

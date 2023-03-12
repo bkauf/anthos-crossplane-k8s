@@ -1,7 +1,7 @@
 apiVersion: apiextensions.crossplane.io/v1
 kind: Composition
 metadata:
-  name: cluster-gcp-up
+  name: cluster-gcp-gke
   labels:
     crossplane.io/xrd: compositeclusters.demo.anthos.com
     provider: gcp

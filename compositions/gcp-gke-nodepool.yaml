@@ -1,7 +1,7 @@
 apiVersion: apiextensions.crossplane.io/v1
 kind: Composition
 metadata:
-  name: gcp-gke-nodepool-up
+  name: gcp-gke-nodepool
   labels:
     crossplane.io/xrd: compositenodepools.demo.anthos.com
     provider: gcp
