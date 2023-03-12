@@ -24,6 +24,14 @@ helm upgrade --install \
 #### Create Secrets
 
 
+*GCP*
+You will need to export a service acount key with owner project permissions 
+
+```sh
+kubectl --namespace crossplane-system \
+    create secret generic gcp-creds \
+    --from-file creds=./gcp-creds.json
+```
 
 AWS
 ```sh
@@ -43,13 +51,6 @@ kubectl apply -f provider-default-aws.yaml
 
 ```
 
-GCP 
-
-```sh
-kubectl --namespace crossplane-system \
-    create secret generic gcp-creds \
-    --from-file creds=./gcp-creds.json
-```
 
 #### Apply the Providers & Provider Configs
 
