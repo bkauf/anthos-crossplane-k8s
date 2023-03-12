@@ -54,7 +54,7 @@ kubectl --namespace crossplane-system \
 #### Apply the Providers & Provider Configs
 
 
-GCP(Note project ID in this file)
+GCP(Note project ID in providerConfig file)
 ```sh
 kubectl apply -f providers/gcp.yaml
 kubectl apply -f providers/gcp-providerconfig.yaml
@@ -93,13 +93,9 @@ kubectl apply -f package/xrd-nodepools.yaml
 
 ```
 
-#### Install GCP Config
+#### Create a cluster
 ```sh
-kubectl crossplane install provider \
-    crossplane/provider-gcp:v0.21.0
-kubectl apply -f provider-default-gcp.yaml
-kubectl create ns b-team
-kubectl apply -f cluster-gcp.yaml
+kubectl apply -f claims/cluster.yaml
 ```
 #### Install Azure
 
