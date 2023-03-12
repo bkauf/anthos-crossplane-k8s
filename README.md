@@ -72,7 +72,7 @@ kubectl apply -f providers/aws-providerconfig.yaml
 GKE on GCP
 ```sh
 kubectl apply -f compositions/gcp-gke.yaml
-kubectl apply -f compositions/gcp--gke-nodepool.yaml
+kubectl apply -f compositions/gcp-gke-nodepool.yaml
 ```
 
 EKS on AWS
