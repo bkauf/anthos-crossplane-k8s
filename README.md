@@ -51,30 +51,33 @@ kubectl --namespace crossplane-system \
     --from-file creds=./gcp-creds.json
 ```
 
-or if you created a package
-```sh
-kubectl crossplane install configuration [link to OCI image]
-
-```
+#### Apply the Providers & Provider Configs
 
 
-```
-### After Package has been built
-#### Apply the Providers 
+GCP(Note project ID in this file)
 ```sh
 kubectl apply -f providers/gcp.yaml
-```
-Apply the provider Configs 
-```sh
 kubectl apply -f providers/gcp-providerconfig.yaml
 ```
+AWS
 
-####Apply the Compositions
+```sh
+kubectl apply -f providers/aws.yaml
+kubectl apply -f providers/aws-providerconfig.yaml
+```
+
+
+#### Apply the Compositions
 
 GKE on GCP
 ```sh
 kubectl apply -f compositions/gcp-gke.yaml
 kubectl apply -f compositions/gcp--gke-nodepool.yaml
+```
+
+EKS on AWS
+```sh
+kubectl apply -f compositions/aws-eks.yaml
 ```
 
 ```sh
@@ -83,11 +86,11 @@ kubectl apply -f package/composition-gcp.yaml
 kubectl apply -f package/xrd.yaml 
 
 ```
-#### Install Provider configurations
+#### Install XRDs
 ```sh
-kubectl apply -f provider-default-aws.yaml
-kubectl create ns a-team
-kubectl apply -f cluster-aws.yaml
+kubectl apply -f package/xrd.yaml
+kubectl apply -f package/xrd-nodepools.yaml
+
 ```
 
 #### Install GCP Config
