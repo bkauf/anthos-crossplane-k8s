@@ -80,12 +80,6 @@ EKS on AWS
 kubectl apply -f compositions/aws-eks.yaml
 ```
 
-```sh
-kubectl apply -f package/composition-aws.yaml
-kubectl apply -f package/composition-gcp.yaml
-kubectl apply -f package/xrd.yaml 
-
-```
 #### Install XRDs
 ```sh
 kubectl apply -f package/xrd.yaml
