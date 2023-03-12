@@ -26,7 +26,7 @@ spec:
           testing.upbound.io/example-name: gke-cluster
       spec:
         providerConfigRef: 
-          name: default-gcp-up
+          name: default-gcp
         forProvider:
           initialNodeCount: 1
           location: us-central1-a
@@ -55,7 +55,7 @@ spec:
           testing.upbound.io/example-name: nodepool
       spec:
         providerConfigRef: 
-          name: default-gcp-up
+          name: default-gcp
         forProvider:
           clusterSelector:
             matchControllerRef: true

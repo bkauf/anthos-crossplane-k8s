@@ -26,7 +26,7 @@ spec:
         #  testing.upbound.io/example-name: nodepool
       spec:
         providerConfigRef: 
-          name: default-gcp-up
+          name: default-gcp
           clusterRef:
             name: test-cluster
           location: us-central1-a
