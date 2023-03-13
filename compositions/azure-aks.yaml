@@ -1,0 +1,41 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: cluster-azure-aks
+  labels:
+    crossplane.io/xrd: compositeclusters.demo.anthos.com
+    provider: azure
+    cluster: aks
+spec:
+  compositeTypeRef:
+    apiVersion: demo.anthos.com/v1
+    kind:  CompositeCluster
+  patchSets:
+  - name: metadata
+    patches:
+    - fromFieldPath: metadata.labels
+  resources:
+  - name: akscluster
+    base:
+      apiVersion: containerservice.azure.upbound.io/v1beta1
+      kind: KubernetesCluster
+      metadata:
+        labels:
+          role: controlplane
+        name: akscluster
+      spec:
+        providerConfigRef: 
+          name: default-azure
+        forProvider:
+          defaultNodePool:
+            - name: default
+              nodeCount: 1
+              vmSize: Standard_D2_v2
+          dnsPrefix: akscluster
+          #need to transform with cluster name in front
+          identity:
+            - type: SystemAssigned
+          location: East Us
+          resourceGroupName: bkauf
+          tags:
+            Environment: Production
