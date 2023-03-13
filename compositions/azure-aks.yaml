@@ -37,5 +37,8 @@ spec:
             - type: SystemAssigned
           location: East Us
           resourceGroupName: bkauf
-          tags:
-            Environment: Production
+          kubernetesVersion: "1.24"
+
+
+
+           

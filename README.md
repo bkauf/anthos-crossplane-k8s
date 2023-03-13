@@ -21,7 +21,7 @@ helm upgrade --install \
     --wait
 ```
 
-#### Create Secrets and Load Provider Configs
+#### Create Secrets and Load Providers
 
 
 **GCP**
@@ -30,13 +30,11 @@ You will need to export a service acount key with owner project permissions
 ```bash
 kubectl --namespace crossplane-system \
     create secret generic gcp-creds \
-    --from-file creds=./gcp-creds.json
+    --from-file creds=secrets/gcp-creds.conf
 kubectl apply -f providers/gcp.yaml
-kubectl apply -f providers/gcp-providerconfig.yaml
 ```
 
 **AWS**
-
 ```bash
 
 export AWS_ACCESS_KEY_ID=[...]
@@ -49,33 +47,47 @@ aws_secret_access_key = $AWS_SECRET_ACCESS_KEY
 
 kubectl --namespace crossplane-system \
     create secret generic aws-creds \
-    --from-file creds=./aws-creds.conf
+    --from-file creds=secrets/aws-creds.conf
 kubectl apply -f providers/aws.yaml
-kubectl apply -f providers/aws-providerconfig.yaml
-
 ```
 **Azure**
 
 setup subscirption and resource groups
 ```bash
-export subId='xxxxxxx'
+export subId='xxxx'
 export resourceGroup='xxxxx' 
+
 ```
+
 Create a secrets file with owner permissions
 ```bash
-    az ad sp create-for-rbac --scopes /subscriptions/$subId/resourceGroups/$resourceGroup    --role Owner     | tee azure-creds.json
+   az ad sp create-for-rbac \
+--sdk-auth \
+--role Owner \
+--scopes /subscriptions/$subId
 ```
 Apply Secret and load provider configs
 ```bash
 kubectl --namespace crossplane-system \
     create secret generic azure-creds \
-    --from-file creds=./azure-creds.conf
+    --from-file creds=./azure-creds.json
 kubectl apply -f providers/azure.yaml
-kubectl apply -f provider/azure-providerconfig.yaml
+
 ```
 
+#### Verify all providers have been installed
+This might take a few minutes
 
+```bash
+kubectl get providers
+```
 
+#### Install Provider Configs
+```bash
+kubectl apply -f providers/gcp-providerconfig.yaml
+kubectl apply -f provider/azure-providerconfig.yaml
+kubectl apply -f providers/aws-providerconfig.yaml
+```
 #### Apply the Compositions
 
 GKE on GCP
