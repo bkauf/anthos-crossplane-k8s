@@ -101,7 +101,7 @@ EKS on AWS
 kubectl apply -f compositions/aws-eks.yaml
 ```
 
-AKS on Azure(not working yet)
+AKS on Azure(work in progress)
 ```sh
 kubectl apply -f compositions/azure-aks.yaml
 ```
