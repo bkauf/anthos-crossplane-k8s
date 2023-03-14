@@ -121,6 +121,16 @@ kubectl apply -f claims/cluster.yaml
 ```sh
 kubectl apply -f claims/ns-scoped-claims/cluster-ns-scope.yaml
 ```
+#### View Clusters
+cluster scope
+```sh
+kubectl get compositeclusters
+```
+
+ns scope
+```sh
+kubectl get clusters
+```
 
 #### View Managed Resources
 ```
