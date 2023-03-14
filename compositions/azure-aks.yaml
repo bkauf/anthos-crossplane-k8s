@@ -22,7 +22,7 @@ spec:
       metadata:
         labels:
           role: controlplane
-        name: akscluster
+       # name: akscluster
       spec:
         providerConfigRef: 
           name: default-azure
@@ -38,6 +38,26 @@ spec:
           location: East Us
           resourceGroupName: bkauf
           kubernetesVersion: "1.24"
+    patches:
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.k8sVersion
+      toFieldPath: spec.forProvider.kubernetesVersion
+    - fromFieldPath: spec.parameters.minNodeCount
+      toFieldPath: spec.forProvider.defaultNodePool[0].nodeCount
+    - fromFieldPath: spec.parameters.nodeSize
+      toFieldPath: spec.forProvider.defaultNodePool[0].vmSize
+      transforms:
+        - type: map
+          map:
+            small: Standard_D2_v2
+            medium: Standard_B4ms
+            large: Standard_D8s_v3
+    - type: ToCompositeFieldPath
+      fromFieldPath: metadata.annotations[crossplane.io/external-name]
+      toFieldPath: status.clusterName
+    - type: ToCompositeFieldPath
+      fromFieldPath: status.conditions.status
+      toFieldPath: status.controlPlaneStatus
 
 
 

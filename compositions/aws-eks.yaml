@@ -100,10 +100,10 @@ spec:
             small: t3.small
             medium: t3.medium
             large: t3.large
-    # - fromFieldPath: spec.parameters.minNodeCount
-    #   toFieldPath: spec.forProvider.scalingConfig.minSize
-    # - fromFieldPath: spec.parameters.minNodeCount
-    #   toFieldPath: spec.forProvider.scalingConfig.desiredSize
+      - fromFieldPath: spec.parameters.minNodeCount
+        toFieldPath: spec.forProvider.scalingConfig[0].minSize
+      - fromFieldPath: spec.parameters.minNodeCount
+        toFieldPath: spec.forProvider.scalingConfig[0].desiredSize
     # - type: ToCompositeFieldPath
     #   fromFieldPath: status.atProvider.status
     #   toFieldPath: status.nodePoolStatus

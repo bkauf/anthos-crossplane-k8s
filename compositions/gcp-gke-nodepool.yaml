@@ -44,7 +44,7 @@ spec:
     - fromFieldPath: spec.parameters.clusterName
       toFieldPath: spec.forProvider.clusterRef.name
     - fromFieldPath: spec.parameters.nodeSize
-      toFieldPath: spec.forProvider.config.machineType
+      toFieldPath: spec.forProvider.nodeConfig[0].machineType
       transforms:
         - type: map
           map:

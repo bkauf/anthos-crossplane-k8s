@@ -76,22 +76,11 @@ spec:
     - type: FromCompositeFieldPath
       fromFieldPath: status.clusterName
       toFieldPath: spec.forProvider.cluster
-  # - name: membership
-  #   base:
-  #     apiVersion: gkehub.gcp.upbound.io/v1beta1
-  #     kind: Membership
-  #     metadata:
-  #       annotations:
-  #         meta.upbound.io/example-id: gkehub/v1beta1/membership
-  #       labels:
-  #         testing.upbound.io/example-name: gke-cluster
-  #       name: gke-cluster
-  #     spec:
-  #       providerConfigRef: 
-  #         name: default-gcp-up
-  #       forProvider:
-  #         endpoint:
-  #           - gkeCluster:
-  #               - resourceLinkSelector:
-  # #                   matchLabels:
-  #                     testing.upbound.io/example-name: gke-cluster
+    - fromFieldPath: spec.parameters.nodeSize
+      toFieldPath: spec.forProvider.nodeConfig[0].machineType
+      transforms:
+        - type: map
+          map:
+            small: e2-small
+            medium: e2-medium
+            large: e2-standard-2
