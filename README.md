@@ -117,13 +117,13 @@ kubectl apply -f package/xrd-nodepools.yaml
 ```sh
 kubectl apply -f claims/cluster.yaml
 ```
-
-
-
-
+#### Create a cluster from a namespace scoped claim
+```sh
+kubectl apply -f claims/ns-scoped-claims/cluster-ns-scope.yaml
+```
 
 #### View Managed Resources
 ```
-kubectl get maanged
+kubectl get manged
 
 ```
