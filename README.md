@@ -1,4 +1,5 @@
 
+![Crossplane for GKE, EKS, AKS](diagram.png)
 
 #### Troubleshooting
 ```sh
