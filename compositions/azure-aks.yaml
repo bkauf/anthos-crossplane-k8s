@@ -32,7 +32,6 @@ spec:
               nodeCount: 1
               vmSize: Standard_D2_v2
           dnsPrefix: akscluster
-          #need to transform with cluster name in front
           identity:
             - type: SystemAssigned
           location: East Us
@@ -55,9 +54,6 @@ spec:
     - type: ToCompositeFieldPath
       fromFieldPath: metadata.annotations[crossplane.io/external-name]
       toFieldPath: status.clusterName
-    - type: ToCompositeFieldPath
-      fromFieldPath: status.conditions.status
-      toFieldPath: status.controlPlaneStatus
 
 
 
