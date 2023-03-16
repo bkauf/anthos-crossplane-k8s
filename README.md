@@ -84,6 +84,7 @@ kubectl get providers
 ```
 
 #### Install Provider Configs
+Input your gcp projectID in the gcp-providerconfig.yaml
 ```bash
 kubectl apply -f providers/gcp-providerconfig.yaml
 kubectl apply -f provider/azure-providerconfig.yaml
@@ -102,7 +103,7 @@ EKS on AWS
 kubectl apply -f compositions/aws-eks.yaml
 ```
 
-AKS on Azure(work in progress)
+AKS on Azure
 ```sh
 kubectl apply -f compositions/azure-aks.yaml
 ```
