@@ -15,4 +15,4 @@ spec:
     fleetProject: "261832825633"
     minNodeCount: 2
     adminUsers:
-    - bkauf@google.com  
+    - bkauf@google.com

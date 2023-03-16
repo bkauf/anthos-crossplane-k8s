@@ -44,6 +44,12 @@ spec:
     - type: ToCompositeFieldPath
       fromFieldPath: status.atProvider.masterVersion
       toFieldPath: status.version  
+    - fromFieldPath: status.atProvider.location
+      toFieldPath: status.region
+    - type: ToCompositeFieldPath
+      fromFieldPath: status.atProvider.status
+      toFieldPath: status.controlPlaneStatus
+
   - name: nodepool
     base:
       apiVersion: container.gcp.upbound.io/v1beta1
@@ -76,6 +82,9 @@ spec:
     - type: FromCompositeFieldPath
       fromFieldPath: status.clusterName
       toFieldPath: spec.forProvider.cluster
+    - type: ToCompositeFieldPath
+      fromFieldPath: status.atProvider.status
+      toFieldPath: status.nodePoolStatus
     - fromFieldPath: spec.parameters.nodeSize
       toFieldPath: spec.forProvider.nodeConfig[0].machineType
       transforms:
@@ -84,3 +93,4 @@ spec:
             small: e2-small
             medium: e2-medium
             large: e2-standard-2
+  

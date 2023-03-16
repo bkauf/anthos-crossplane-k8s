@@ -36,13 +36,13 @@ spec:
                 matchControllerRef: true 
               endpointPrivateAccesss: false
               endpointPublicAccess: true 
-          writeConnectionSecretToRef:
-            name: kubeconfig
-            namespace: default  
+        writeConnectionSecretToRef:
+          name: kubeconfig
+          namespace: default  
     patches:
-    - type: ToCompositeFieldPath
-      fromFieldPath: status.atProvider.identity.oidc.issuer
-      toFieldPath: status.odicIssuerUrl
+    # - type: ToCompositeFieldPath
+      # fromFieldPath: status.atProvider.identity.oidc.issuer
+      # toFieldPath: status.odicIssuerUrl
     - fromFieldPath: spec.parameters.k8sVersion
       toFieldPath: spec.forProvider.version
     - type: ToCompositeFieldPath
@@ -51,8 +51,9 @@ spec:
     - type: ToCompositeFieldPath
       fromFieldPath: status.atProvider.status
       toFieldPath: status.controlPlaneStatus
-    - fromFieldPath: spec.writeConnectionSecretToRef.namespace
-      toFieldPath: spec.writeConnectionSecretToRef.namespace
+    - type: ToCompositeFieldPath
+      fromFieldPath: spec.forProvider.region
+      toFieldPath: status.region
     - fromFieldPath: metadata.uid
       toFieldPath: spec.writeConnectionSecretToRef.name
       transforms:
@@ -104,9 +105,9 @@ spec:
         toFieldPath: spec.forProvider.scalingConfig[0].minSize
       - fromFieldPath: spec.parameters.minNodeCount
         toFieldPath: spec.forProvider.scalingConfig[0].desiredSize
-    # - type: ToCompositeFieldPath
-    #   fromFieldPath: status.atProvider.status
-    #   toFieldPath: status.nodePoolStatus
+      - type: ToCompositeFieldPath
+        fromFieldPath: status.atProvider.status
+        toFieldPath: status.nodePoolStatus
     # readinessChecks:
     # - type: MatchString
     #   fieldPath: status.atProvider.status

@@ -58,6 +58,8 @@ spec:
                 type: string
               vpcId:
                 type: string
+              region:
+                type: string
     additionalPrinterColumns:
     - name: clusterName
       type: string
@@ -68,6 +70,6 @@ spec:
     - name: nodePool
       type: string
       jsonPath: ".status.nodePoolStatus"
-    - name: vpcId
+    - name: region
       type: string
-      jsonPath: ".status.vpcId"
+      jsonPath: ".status.region"
