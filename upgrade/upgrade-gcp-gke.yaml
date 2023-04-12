@@ -8,4 +8,6 @@ spec:
   providerConfigRef: 
     name: default-gcp # edit to match GCP providerconfig
   forProvider:
-    location: us-central1-c # edit to match location
+    location: us-central1-c # edit to match desired location
+    minMasterVersion: 1.24.11-gke.1000 # edit to match desired version
+    nodeVersion: 1.24.11-gke.1000 # edit to match desired version
