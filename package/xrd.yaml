@@ -38,6 +38,12 @@ spec:
                     type: integer
                   nodeSize:
                     type: string
+                  externalName:
+                    type: string
+                  nodePoolName:
+                    type: string
+                  location:
+                    type: string
                 type: object
           status:
             type: object

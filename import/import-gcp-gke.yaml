@@ -1,0 +1,13 @@
+apiVersion: container.gcp.upbound.io/v1beta1
+kind: Cluster
+metadata:
+  name: cluster-1
+  annotations:
+    crossplane.io/external-name: cluster-1
+spec:
+  providerConfigRef: 
+    name: default-gcp
+  forProvider:
+    location: us-central1-c
+  #  minMasterVersion: 1.24.11-gke.1000
+  #  nodeVersion: 1.24.11-gke.1000

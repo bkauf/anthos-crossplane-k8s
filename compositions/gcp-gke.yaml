@@ -30,6 +30,7 @@ spec:
         forProvider:
           initialNodeCount: 1
           location: us-central1-a
+          version: 1.26
           removeDefaultNodePool: true
     patches:
     - type: FromCompositeFieldPath
@@ -49,7 +50,6 @@ spec:
     - type: ToCompositeFieldPath
       fromFieldPath: status.atProvider.status
       toFieldPath: status.controlPlaneStatus
-
   - name: nodepool
     base:
       apiVersion: container.gcp.upbound.io/v1beta1
@@ -93,4 +93,3 @@ spec:
             small: e2-small
             medium: e2-medium
             large: e2-standard-2
-  

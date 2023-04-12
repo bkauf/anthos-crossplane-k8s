@@ -31,7 +31,7 @@ You will need to export a service acount key with owner project permissions
 ```bash
 kubectl --namespace crossplane-system \
     create secret generic gcp-creds \
-    --from-file creds=secrets/gcp-creds.conf
+    --from-file creds=secrets/gcp-creds.json
 kubectl apply -f providers/gcp.yaml
 ```
 
@@ -133,6 +133,12 @@ ns scope
 ```sh
 kubectl get clusters
 ```
+#### Import an Existing GKE cluster on GCP
+You will have to change the external name and location fieds in this file
+```sh
+kubectl apply -f import/import-gcp-gke.yaml
+```
+
 
 #### View Managed Resources
 ```
