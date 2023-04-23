@@ -30,7 +30,7 @@ spec:
         forProvider:
           initialNodeCount: 1
           location: us-central1-a
-          version: 1.26
+          version: 1.27
           removeDefaultNodePool: true
     patches:
     - type: FromCompositeFieldPath

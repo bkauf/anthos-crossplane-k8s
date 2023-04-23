@@ -44,6 +44,8 @@ spec:
                     type: string
                   location:
                     type: string
+                  clusterName: 
+                    type: string
                 type: object
           status:
             type: object

@@ -26,7 +26,16 @@ helm upgrade --install \
 
 
 **GCP**
-You will need to export a service acount key with owner project permissions 
+
+If using [workload Identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity) edit the project ID in the providers/gcp-providerconfig-wi.yaml file then
+```
+kubectl apply -f providers/gcp.yaml
+kubectl apply -f providers/gcp-providerconfig-wi.yaml
+```
+Create a GCP service account for Crossplane to use WI
+by [following these instructions](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity#authenticating_to)
+
+If Not using WIYou will need to export a service acount key with owner project permissions 
 
 ```bash
 kubectl --namespace crossplane-system \

@@ -1,0 +1,8 @@
+apiVersion: gcp.upbound.io/v1beta1
+kind: ProviderConfig
+metadata:
+  name: default-gcp
+spec:
+  projectID: anthos-multi-cloud-335819
+  credentials:
+    source: InjectedIdentity

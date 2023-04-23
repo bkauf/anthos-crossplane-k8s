@@ -60,7 +60,3 @@ spec:
     - type: ToCompositeFieldPath
       fromFieldPath: status.conditions.status
       toFieldPath: status.controlPlaneStatus
-
-
-
-           

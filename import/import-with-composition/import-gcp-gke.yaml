@@ -1,0 +1,39 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: import-gcp-gke
+  labels:
+    crossplane.io/xrd: compositeclusters.demo.anthos.com
+    provider: gcp
+    cluster: gke
+spec:
+  compositeTypeRef:
+    apiVersion: demo.anthos.com/v1
+    kind:  CompositeCluster
+  patchSets:
+  - name: metadata
+    patches:
+    - fromFieldPath: metadata.labels
+  resources:
+  - name: cluster
+    base:
+      apiVersion: container.gcp.upbound.io/v1beta1
+      kind: Cluster
+      metadata:
+        annotations:
+          crossplane.io/external-name: gkehub/v1beta1/membership
+      spec:
+        providerConfigRef: 
+          name: default-gcp
+        forProvider:
+          location: us-central1-a
+         # minMasterVersion: 1.26.2-gke.1000 # edit to match desired version to demo upgrading all clusters
+         # nodeVersion: 1.26.2-gke.1000 # edit to match desired version to demo upgrading all clusters
+
+    patches:
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.clusterName
+      toFieldPath: metadata.annotations[crossplane.io/external-name]
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.location
+      toFieldPath: spec.forProvider.location 
