@@ -8,9 +8,7 @@ kubectl get events -n default --sort-by={'lastTimestamp'}
 
 ### Install Crossplane
 ```sh
-gcloud alpha anthos config controller create ${CLUSTER_NAME} \
---location ${LOCATION} \
---experimental-features=Crossplane
+TDB
 
 ```
 
