@@ -1,4 +1,4 @@
-apiVersion: gcp.upbound.io/v1beta1
+apiVersion: gcp.gke.cloud.google.com/v1beta1
 kind: ProviderConfig
 metadata:
   name: default-gcp
@@ -7,6 +7,6 @@ spec:
   credentials:
     source: Secret
     secretRef:
-      namespace: crossplane-system
+      namespace: crossplane-config
       name: gcp-creds
       key: creds

@@ -5,7 +5,7 @@ metadata:
 spec:
   compositionRef:
     # Possible values cluster-gcp-gke, cluster-aws-eks, cluster-azure-aks
-    name: cluster-gcp-gke
+    name: cluster-aws-eks
   parameters:
     # Possible values small, medium, large
     nodeSize: medium

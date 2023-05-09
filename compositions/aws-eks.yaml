@@ -17,7 +17,7 @@ spec:
   resources:
   - name: ekscluster
     base:
-      apiVersion:  eks.aws.upbound.io/v1beta1
+      apiVersion:  eks.aws.gke.cloud.google.com/v1beta1
       kind: Cluster
       metadata:
         name: eks-cluster
@@ -67,7 +67,7 @@ spec:
 
   - name: eksnodegroup
     base:
-      apiVersion: eks.aws.upbound.io/v1beta1
+      apiVersion: eks.aws.gke.cloud.google.com/v1beta1
       kind: NodeGroup
       metadata:
         name: eks-ng
@@ -114,7 +114,7 @@ spec:
     #   matchString: ACTIVE
   - name: iamrole-controlplane
     base:
-      apiVersion: iam.aws.upbound.io/v1beta1
+      apiVersion: iam.aws.gke.cloud.google.com/v1beta1
       kind: Role
       metadata:
         labels:
@@ -145,7 +145,7 @@ spec:
 
   - name: iamattachment-controlplane
     base:
-      apiVersion: iam.aws.upbound.io/v1beta1
+      apiVersion: iam.aws.gke.cloud.google.com/v1beta1
       kind: RolePolicyAttachment
       metadata:
         name: cluster-policy1
@@ -159,7 +159,7 @@ spec:
               role: controlplane
   - name: iamrole-nodegroup
     base:
-      apiVersion: iam.aws.upbound.io/v1beta1
+      apiVersion: iam.aws.gke.cloud.google.com/v1beta1
       kind: Role
       metadata:
         labels:
@@ -189,7 +189,7 @@ spec:
           path: /
   - name: iamattachment-worker
     base:
-      apiVersion: iam.aws.upbound.io/v1beta1
+      apiVersion: iam.aws.gke.cloud.google.com/v1beta1
       kind: RolePolicyAttachment
       metadata:
         name: node-policy1
@@ -203,7 +203,7 @@ spec:
               role: nodegroup
   - name: iamattachment-cni
     base:
-      apiVersion: iam.aws.upbound.io/v1beta1
+      apiVersion: iam.aws.gke.cloud.google.com/v1beta1
       kind: RolePolicyAttachment
       metadata:
         name: node-policy2
@@ -217,7 +217,7 @@ spec:
               role: nodegroup
   - name: iamattachment-registry
     base:
-      apiVersion: iam.aws.upbound.io/v1beta1
+      apiVersion: iam.aws.gke.cloud.google.com/v1beta1
       kind: RolePolicyAttachment
       metadata:
         name: node-policy2 
@@ -231,7 +231,7 @@ spec:
               role: nodegroup
   - name: vpc-eks
     base:
-      apiVersion: ec2.aws.upbound.io/v1beta1
+      apiVersion: ec2.aws.gke.cloud.google.com/v1beta1
       kind: VPC
       metadata:
         name: sample-vpc
@@ -250,7 +250,7 @@ spec:
 
   - name: subnet-nodepool-1a
     base:
-      apiVersion: ec2.aws.upbound.io/v1beta1
+      apiVersion: ec2.aws.gke.cloud.google.com/v1beta1
       kind: Subnet
       metadata:
         name: subnet-nodepool-1a
@@ -272,7 +272,7 @@ spec:
             Name: subnet-nodepool-1a
   - name: subnet-nodepool-1b
     base:
-      apiVersion: ec2.aws.upbound.io/v1beta1
+      apiVersion: ec2.aws.gke.cloud.google.com/v1beta1
       kind: Subnet
       metadata:
         name: subnet-nodepool-1b
@@ -294,7 +294,7 @@ spec:
             Name: subnet-nodepool-1b
   - name: subnet-nodepool-1c
     base:
-      apiVersion: ec2.aws.upbound.io/v1beta1
+      apiVersion: ec2.aws.gke.cloud.google.com/v1beta1
       kind: Subnet
       metadata:
         name: subnet-nodepool-1c
@@ -316,7 +316,7 @@ spec:
             Name: subnet-nodepool-1c
   - name: inet-gateway
     base:
-      apiVersion: ec2.aws.upbound.io/v1beta1
+      apiVersion: ec2.aws.gke.cloud.google.com/v1beta1
       kind: InternetGateway
       metadata:
         name: routegw
@@ -334,7 +334,7 @@ spec:
 
   - name: route-to-ig
     base:
-      apiVersion: ec2.aws.upbound.io/v1beta1
+      apiVersion: ec2.aws.gke.cloud.google.com/v1beta1
       kind: DefaultRouteTable
       metadata:
         name: routetoIG
@@ -353,11 +353,9 @@ spec:
                 matchControllerRef: true   
   - name: RouteTableAssociation
     base:
-      apiVersion: ec2.aws.upbound.io/v1beta1
+      apiVersion: ec2.aws.gke.cloud.google.com/v1beta1
       kind: RouteTableAssociation
       metadata:
-        labels:
-          testing.upbound.io/example-name: rta
         name: rta
       spec:
         providerConfigRef: 

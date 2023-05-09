@@ -8,18 +8,10 @@ kubectl get events -n default --sort-by={'lastTimestamp'}
 
 ### Install Crossplane
 ```sh
-kubectl create namespace a-team
+gcloud alpha anthos config controller create ${CLUSTER_NAME} \
+--location ${LOCATION} \
+--experimental-features=Crossplane
 
-helm repo add crossplane-stable \
-    https://charts.crossplane.io/stable
-
-helm repo update
-
-helm upgrade --install \
-    crossplane crossplane-stable/crossplane \
-    --namespace crossplane-system \
-    --create-namespace \
-    --wait
 ```
 
 #### Create Secrets and Load Providers
@@ -27,21 +19,11 @@ helm upgrade --install \
 
 **GCP**
 
-If using [workload Identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity) edit the project ID in the providers/gcp-providerconfig-wi.yaml file then
-```
-kubectl apply -f providers/gcp.yaml
-kubectl apply -f providers/gcp-providerconfig-wi.yaml
-```
-Create a GCP service account for Crossplane to use WI
-by [following these instructions](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity#authenticating_to)
-
-If Not using WIYou will need to export a service acount key with owner project permissions 
 
 ```bash
-kubectl --namespace crossplane-system \
+kubectl --namespace crossplane-config \
     create secret generic gcp-creds \
     --from-file creds=secrets/gcp-creds.json
-kubectl apply -f providers/gcp.yaml
 ```
 
 **AWS**
@@ -55,10 +37,9 @@ aws_access_key_id = $AWS_ACCESS_KEY_ID
 aws_secret_access_key = $AWS_SECRET_ACCESS_KEY
 " | tee aws-creds.conf
 
-kubectl --namespace crossplane-system \
+kubectl --namespace crossplane-config \
     create secret generic aws-creds \
     --from-file creds=secrets/aws-creds.conf
-kubectl apply -f providers/aws.yaml
 ```
 **Azure**
 
@@ -96,7 +77,7 @@ kubectl get providers
 Input your gcp projectID in the gcp-providerconfig.yaml
 ```bash
 kubectl apply -f providers/gcp-providerconfig.yaml
-kubectl apply -f providers/azure-providerconfig.yaml
+#kubectl apply -f providers/azure-providerconfig.yaml
 kubectl apply -f providers/aws-providerconfig.yaml
 ```
 #### Apply the Compositions
@@ -154,3 +135,11 @@ kubectl apply -f import/import-gcp-gke.yaml
 kubectl get manged
 
 ```
+
+#### Optional- Setup Config Sync
+Edit the config-sync.yaml file to point to your directory([Documentation](https://cloud.google.com/anthos-config-management/docs/how-to/config-controller-setup#configure-config-sync))
+
+```
+kubectl apply -f config-sync.yaml
+```
+

@@ -17,7 +17,7 @@ spec:
   resources:
   - name: cluster
     base:
-      apiVersion: container.gcp.upbound.io/v1beta1
+      apiVersion: container.gcp.gke.cloud.google.com/v1beta1
       kind: Cluster
       metadata:
         annotations:
@@ -27,8 +27,8 @@ spec:
           name: default-gcp
         forProvider:
           location: us-central1-a
-         # minMasterVersion: 1.26.2-gke.1000 # edit to match desired version to demo upgrading all clusters
-         # nodeVersion: 1.26.2-gke.1000 # edit to match desired version to demo upgrading all clusters
+          #minMasterVersion: 1.26.2-gke.1000 # edit to match desired version to demo upgrading all clusters
+          #nodeVersion: 1.26.2-gke.1000 # edit to match desired version to demo upgrading all clusters
 
     patches:
     - type: FromCompositeFieldPath

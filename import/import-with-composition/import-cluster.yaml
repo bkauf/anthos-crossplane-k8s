@@ -2,11 +2,11 @@
 apiVersion: demo.anthos.com/v1
 kind: CompositeCluster 
 metadata:
-  name: cluster-2 # name of the cluster in GCP
+  name: cluster-1 # name of the cluster in GCP
 spec:
   compositionRef:
     # Possible values import-gcp-gke
     name: import-gcp-gke
   parameters:
-    clusterName: cluster-2 # name of the cluster in GCP
+    clusterName: cluster-1 # name of the cluster in GCP
     location: us-central1-c # location of the cluster in GCP
