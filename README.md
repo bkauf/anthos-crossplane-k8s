@@ -57,9 +57,9 @@ Create a secrets file with owner permissions
 ```
 Apply Secret and load provider configs
 ```bash
-kubectl --namespace crossplane-system \
+kubectl --namespace crossplane-config \
     create secret generic azure-creds \
-    --from-file creds=./azure-creds.json
+    --from-file creds=secrets/azure-creds.json
 kubectl apply -f providers/azure.yaml
 
 ```

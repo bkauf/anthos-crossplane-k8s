@@ -1,7 +1,7 @@
 apiVersion: demo.anthos.com/v1
 kind: CompositeCluster 
 metadata:
-  name: test-cluster2
+  name: test-cluster
 spec:
   compositionRef:
     # Possible values cluster-gcp-gke, cluster-aws-eks, cluster-azure-aks
