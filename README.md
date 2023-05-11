@@ -75,7 +75,7 @@ kubectl get providers
 Input your gcp projectID in the gcp-providerconfig.yaml
 ```bash
 kubectl apply -f providers/gcp-providerconfig.yaml
-#kubectl apply -f providers/azure-providerconfig.yaml
+kubectl apply -f providers/azure-providerconfig.yaml
 kubectl apply -f providers/aws-providerconfig.yaml
 ```
 #### Apply the Compositions
