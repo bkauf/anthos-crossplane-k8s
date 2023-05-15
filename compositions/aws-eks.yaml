@@ -35,10 +35,7 @@ spec:
             - subnetIdSelector:
                 matchControllerRef: true 
               endpointPrivateAccesss: false
-              endpointPublicAccess: true 
-        writeConnectionSecretToRef:
-          name: kubeconfig
-          namespace: default  
+              endpointPublicAccess: true
     patches:
     # - type: ToCompositeFieldPath
       # fromFieldPath: status.atProvider.identity.oidc.issuer
@@ -54,17 +51,35 @@ spec:
     - type: ToCompositeFieldPath
       fromFieldPath: spec.forProvider.region
       toFieldPath: status.region
+  #   readinessChecks:
+  #   - type: MatchString
+  #     fieldPath: status.atProvider.status
+  #     matchString: ACTIVE
+
+  - name: clusterauth
+    base:
+      apiVersion:  eks.aws.gke.cloud.google.com/v1beta1
+      kind: ClusterAuth
+      metadata:
+        name: clusterauth
+        labels:
+         role: controlplane
+      spec:
+        providerConfigRef: 
+          name: default-aws
+        forProvider:
+          clusterNameSelector:
+            matchControllerRef: true
+        writeConnectionSecretToRef:
+          name: kubeconfig
+          namespace: default
+    patches:
     - fromFieldPath: metadata.uid
       toFieldPath: spec.writeConnectionSecretToRef.name
       transforms:
         - type: string
           string:
             fmt: "%s-ekscluster"
-  #   readinessChecks:
-  #   - type: MatchString
-  #     fieldPath: status.atProvider.status
-  #     matchString: ACTIVE
-
   - name: eksnodegroup
     base:
       apiVersion: eks.aws.gke.cloud.google.com/v1beta1
