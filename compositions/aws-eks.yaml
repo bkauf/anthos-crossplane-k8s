@@ -37,9 +37,9 @@ spec:
               endpointPrivateAccesss: false
               endpointPublicAccess: true
     patches:
-    # - type: ToCompositeFieldPath
-      # fromFieldPath: status.atProvider.identity.oidc.issuer
-      # toFieldPath: status.odicIssuerUrl
+    - type: ToCompositeFieldPath
+      fromFieldPath: status.atProvider.identity[0].oidc[0].issuer
+      toFieldPath: status.odicIssuerUrl
     - fromFieldPath: spec.parameters.k8sVersion
       toFieldPath: spec.forProvider.version
     - type: ToCompositeFieldPath
@@ -409,3 +409,35 @@ spec:
     readinessChecks:
     - type: NonEmpty
       fieldPath: status.succeeded
+  - name: attachedCluster
+    base:
+      apiVersion: containerattached.gcp.gke.cloud.google.com/v1beta1
+      kind: Cluster
+      metadata:
+        name: attachedcluster
+      spec:
+        forProvider:
+          distribution: eks
+          location: us-west1
+          fleet:
+          - project: "project/<project-number>"
+    patches:
+    - fromFieldPath: spec.parameters.k8sVersion
+      toFieldPath: spec.forProvider.platformVersion
+      transforms:
+      - type: map
+        map:
+          1.24: 1.24.0-gke.1
+          1.25: 1.25.0-gke.2
+    - fromFieldPath: status.odicIssuerUrl
+      toFieldPath: spec.forProvider.oidcConfig[0].issuerUrl
+    - fromFieldPath: spec.parameters.fleetProject
+      toFieldPath: spec.forProvider.fleet[0].project
+      transforms:
+        - type: string
+          string:
+            fmt: "projects/%s"
+    - fromFieldPath: spec.parameters.adminUsers
+      toFieldPath: spec.forProvider.authorization[0].adminUsers
+    - fromFieldPath: status.clusterName
+      toFieldPath: metadata.annotations[crossplane.io/external-name]
