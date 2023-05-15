@@ -267,7 +267,6 @@ spec:
     - type: ToCompositeFieldPath
       fromFieldPath: metadata.annotations[crossplane.io/external-name]
       toFieldPath: status.vpcId
-
   - name: subnet-nodepool-1a
     base:
       apiVersion: ec2.aws.gke.cloud.google.com/v1beta1
@@ -369,4 +368,44 @@ spec:
           route:
             - cidrBlock: 0.0.0.0/0
               gatewayIdSelector:
-                matchControllerRef: true  
+                matchControllerRef: true 
+  - name: clusterbootstrap
+    base:
+      apiVersion: containerattached.gcp.gke.cloud.google.com/v1beta1
+      kind: ClusterBootstrapJob
+      metadata:
+        name: installmanifest
+        labels:
+          name: attachedclusterbootstrap
+      spec:
+        clusterConfig:
+          project: ""
+          id: ""
+          location: us-west1
+          platformVersion: ""
+        clusterCredentials:
+          source: Secret
+          secretRef:
+            namespace: default
+            key: kubeconfig
+    patches:
+    - fromFieldPath: spec.parameters.k8sVersion
+      toFieldPath: spec.clusterConfig.platformVersion
+      transforms:
+      - type: map
+        map:
+          1.24: 1.24.0-gke.1
+          1.25: 1.25.0-gke.2
+    - fromFieldPath: status.clusterName
+      toFieldPath: spec.clusterConfig.id
+    - fromFieldPath: spec.parameters.fleetProject
+      toFieldPath: spec.clusterConfig.project
+    - fromFieldPath: metadata.uid
+      toFieldPath: spec.clusterCredentials.secretRef.name
+      transforms:
+        - type: string
+          string:
+            fmt: "%s-ekscluster"
+    readinessChecks:
+    - type: NonEmpty
+      fieldPath: status.succeeded
