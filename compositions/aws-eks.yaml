@@ -58,7 +58,7 @@ spec:
 
   - name: clusterauth
     base:
-      apiVersion:  eks.aws.gke.cloud.google.com/v1beta1
+      apiVersion: eks.aws.gke.cloud.google.com/v1beta1
       kind: ClusterAuth
       metadata:
         name: clusterauth
@@ -80,6 +80,8 @@ spec:
         - type: string
           string:
             fmt: "%s-ekscluster"
+    - fromFieldPath: status.region
+      toFieldPath: spec.forProvider.region
   - name: eksnodegroup
     base:
       apiVersion: eks.aws.gke.cloud.google.com/v1beta1
