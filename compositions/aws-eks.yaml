@@ -92,10 +92,9 @@ spec:
         forProvider:
           clusterNameSelector:
             matchControllerRef: true
-           # matchLabels:
-           #   role: controlplane
           #instanceTypes: t3.medium
           nodeRoleArnSelector:
+            matchControllerRef: true
             matchLabels: 
               role: nodegroup
           region: us-east-1
@@ -104,9 +103,9 @@ spec:
               maxSize: 6
               minSize: 1
           subnetIdSelector:
+            matchControllerRef: true
             matchLabels: 
               role: nodegroup
-            #matchedControllerRef: true
     patches:
       - fromFieldPath: spec.parameters.nodeSize
         toFieldPath: spec.forProvider.instanceTypes[0]
@@ -170,6 +169,7 @@ spec:
         forProvider:
           policyArn: arn:aws:iam::aws:policy/AmazonEKSClusterPolicy
           roleSelector:
+            matchControllerRef: true
             matchLabels:
               role: controlplane
   - name: iamrole-nodegroup
@@ -214,6 +214,7 @@ spec:
         forProvider:
           policyArn: arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy
           roleSelector:
+            matchControllerRef: true
             matchLabels:
               role: nodegroup
   - name: iamattachment-cni
@@ -228,6 +229,7 @@ spec:
         forProvider:
           policyArn: arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
           roleSelector:
+            matchControllerRef: true
             matchLabels:
               role: nodegroup
   - name: iamattachment-registry
@@ -242,6 +244,7 @@ spec:
         forProvider:
           policyArn: arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
           roleSelector:
+            matchControllerRef: true
             matchLabels:
               role: nodegroup
   - name: vpc-eks
