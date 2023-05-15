@@ -351,7 +351,6 @@ spec:
             matchControllerRef: true
           tags:
             Name: eks-cluster
-
   - name: route-to-ig
     base:
       apiVersion: ec2.aws.gke.cloud.google.com/v1beta1
@@ -370,22 +369,4 @@ spec:
           route:
             - cidrBlock: 0.0.0.0/0
               gatewayIdSelector:
-                matchControllerRef: true   
-  - name: RouteTableAssociation
-    base:
-      apiVersion: ec2.aws.gke.cloud.google.com/v1beta1
-      kind: RouteTableAssociation
-      metadata:
-        name: rta
-      spec:
-        providerConfigRef: 
-          name: default-aws
-        forProvider:
-          region: us-east-1
-          routeTableIdSelector:
-            matchControllerRef: true
-          subnetIdSelector:
-            matchControllerRef: true
-          gatewayIdSelector:
-            matchControllerRef: true
-
+                matchControllerRef: true  
