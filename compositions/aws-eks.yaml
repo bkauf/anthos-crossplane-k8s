@@ -35,14 +35,11 @@ spec:
             - subnetIdSelector:
                 matchControllerRef: true 
               endpointPrivateAccesss: false
-              endpointPublicAccess: true 
-        writeConnectionSecretToRef:
-          name: kubeconfig
-          namespace: default  
+              endpointPublicAccess: true
     patches:
-    # - type: ToCompositeFieldPath
-      # fromFieldPath: status.atProvider.identity.oidc.issuer
-      # toFieldPath: status.odicIssuerUrl
+    - type: ToCompositeFieldPath
+      fromFieldPath: status.atProvider.identity[0].oidc[0].issuer
+      toFieldPath: status.odicIssuerUrl
     - fromFieldPath: spec.parameters.k8sVersion
       toFieldPath: spec.forProvider.version
     - type: ToCompositeFieldPath
@@ -54,17 +51,37 @@ spec:
     - type: ToCompositeFieldPath
       fromFieldPath: spec.forProvider.region
       toFieldPath: status.region
+  #   readinessChecks:
+  #   - type: MatchString
+  #     fieldPath: status.atProvider.status
+  #     matchString: ACTIVE
+
+  - name: clusterauth
+    base:
+      apiVersion: eks.aws.gke.cloud.google.com/v1beta1
+      kind: ClusterAuth
+      metadata:
+        name: clusterauth
+        labels:
+         role: controlplane
+      spec:
+        providerConfigRef: 
+          name: default-aws
+        forProvider:
+          clusterNameSelector:
+            matchControllerRef: true
+        writeConnectionSecretToRef:
+          name: kubeconfig
+          namespace: default
+    patches:
     - fromFieldPath: metadata.uid
       toFieldPath: spec.writeConnectionSecretToRef.name
       transforms:
         - type: string
           string:
             fmt: "%s-ekscluster"
-  #   readinessChecks:
-  #   - type: MatchString
-  #     fieldPath: status.atProvider.status
-  #     matchString: ACTIVE
-
+    - fromFieldPath: status.region
+      toFieldPath: spec.forProvider.region
   - name: eksnodegroup
     base:
       apiVersion: eks.aws.gke.cloud.google.com/v1beta1
@@ -77,10 +94,9 @@ spec:
         forProvider:
           clusterNameSelector:
             matchControllerRef: true
-           # matchLabels:
-           #   role: controlplane
           #instanceTypes: t3.medium
           nodeRoleArnSelector:
+            matchControllerRef: true
             matchLabels: 
               role: nodegroup
           region: us-east-1
@@ -89,9 +105,9 @@ spec:
               maxSize: 6
               minSize: 1
           subnetIdSelector:
+            matchControllerRef: true
             matchLabels: 
               role: nodegroup
-            #matchedControllerRef: true
     patches:
       - fromFieldPath: spec.parameters.nodeSize
         toFieldPath: spec.forProvider.instanceTypes[0]
@@ -155,6 +171,7 @@ spec:
         forProvider:
           policyArn: arn:aws:iam::aws:policy/AmazonEKSClusterPolicy
           roleSelector:
+            matchControllerRef: true
             matchLabels:
               role: controlplane
   - name: iamrole-nodegroup
@@ -199,6 +216,7 @@ spec:
         forProvider:
           policyArn: arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy
           roleSelector:
+            matchControllerRef: true
             matchLabels:
               role: nodegroup
   - name: iamattachment-cni
@@ -213,6 +231,7 @@ spec:
         forProvider:
           policyArn: arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
           roleSelector:
+            matchControllerRef: true
             matchLabels:
               role: nodegroup
   - name: iamattachment-registry
@@ -227,6 +246,7 @@ spec:
         forProvider:
           policyArn: arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
           roleSelector:
+            matchControllerRef: true
             matchLabels:
               role: nodegroup
   - name: vpc-eks
@@ -247,7 +267,6 @@ spec:
     - type: ToCompositeFieldPath
       fromFieldPath: metadata.annotations[crossplane.io/external-name]
       toFieldPath: status.vpcId
-
   - name: subnet-nodepool-1a
     base:
       apiVersion: ec2.aws.gke.cloud.google.com/v1beta1
@@ -331,7 +350,6 @@ spec:
             matchControllerRef: true
           tags:
             Name: eks-cluster
-
   - name: route-to-ig
     base:
       apiVersion: ec2.aws.gke.cloud.google.com/v1beta1
@@ -350,22 +368,76 @@ spec:
           route:
             - cidrBlock: 0.0.0.0/0
               gatewayIdSelector:
-                matchControllerRef: true   
-  - name: RouteTableAssociation
+                matchControllerRef: true 
+  - name: clusterbootstrap
     base:
-      apiVersion: ec2.aws.gke.cloud.google.com/v1beta1
-      kind: RouteTableAssociation
+      apiVersion: containerattached.gcp.gke.cloud.google.com/v1beta1
+      kind: ClusterBootstrapJob
       metadata:
-        name: rta
+        name: installmanifest
+        labels:
+          name: attachedclusterbootstrap
       spec:
-        providerConfigRef: 
-          name: default-aws
+        clusterConfig:
+          project: ""
+          id: ""
+          location: us-west1
+          platformVersion: ""
+        clusterCredentials:
+          source: Secret
+          secretRef:
+            namespace: default
+            key: kubeconfig
+    patches:
+    - fromFieldPath: spec.parameters.k8sVersion
+      toFieldPath: spec.clusterConfig.platformVersion
+      transforms:
+      - type: map
+        map:
+          1.24: 1.24.0-gke.1
+          1.25: 1.25.0-gke.2
+    - fromFieldPath: status.clusterName
+      toFieldPath: spec.clusterConfig.id
+    - fromFieldPath: spec.parameters.fleetProject
+      toFieldPath: spec.clusterConfig.project
+    - fromFieldPath: metadata.uid
+      toFieldPath: spec.clusterCredentials.secretRef.name
+      transforms:
+        - type: string
+          string:
+            fmt: "%s-ekscluster"
+    readinessChecks:
+    - type: NonEmpty
+      fieldPath: status.succeeded
+  - name: attachedCluster
+    base:
+      apiVersion: containerattached.gcp.gke.cloud.google.com/v1beta1
+      kind: Cluster
+      metadata:
+        name: attachedcluster
+      spec:
         forProvider:
-          region: us-east-1
-          routeTableIdSelector:
-            matchControllerRef: true
-          subnetIdSelector:
-            matchControllerRef: true
-          gatewayIdSelector:
-            matchControllerRef: true
-
+          distribution: eks
+          location: us-west1
+          fleet:
+          - project: "project/<project-number>"
+    patches:
+    - fromFieldPath: spec.parameters.k8sVersion
+      toFieldPath: spec.forProvider.platformVersion
+      transforms:
+      - type: map
+        map:
+          1.24: 1.24.0-gke.1
+          1.25: 1.25.0-gke.2
+    - fromFieldPath: status.odicIssuerUrl
+      toFieldPath: spec.forProvider.oidcConfig[0].issuerUrl
+    - fromFieldPath: spec.parameters.fleetProject
+      toFieldPath: spec.forProvider.fleet[0].project
+      transforms:
+        - type: string
+          string:
+            fmt: "projects/%s"
+    - fromFieldPath: spec.parameters.adminUsers
+      toFieldPath: spec.forProvider.authorization[0].adminUsers
+    - fromFieldPath: status.clusterName
+      toFieldPath: metadata.annotations[crossplane.io/external-name]

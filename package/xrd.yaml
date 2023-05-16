@@ -52,6 +52,8 @@ spec:
             description: A AttachedClusterStatus represents the observed state of
               a Cluster.
             properties:
+              odicIssuerUrl:
+                type: string
               cluster:
                 type: string
               clusterName:
