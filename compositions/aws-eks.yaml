@@ -416,6 +416,8 @@ spec:
       metadata:
         name: attachedcluster
       spec:
+        providerConfigRef: 
+            name: default-gcp
         forProvider:
           distribution: eks
           location: us-west1
