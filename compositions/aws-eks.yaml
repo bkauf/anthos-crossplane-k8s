@@ -31,6 +31,8 @@ spec:
           version: 1.24
           roleArnSelector:
             matchControllerRef: true
+            matchLabels:
+              role: controlplane
           vpcConfig:
             - subnetIdSelector:
                 matchControllerRef: true 
@@ -65,7 +67,7 @@ spec:
         labels:
          role: controlplane
       spec:
-        providerConfigRef: 
+        providerConfigRef:
           name: default-aws
         forProvider:
           clusterNameSelector:
@@ -378,37 +380,35 @@ spec:
         labels:
           name: attachedclusterbootstrap
       spec:
-        clusterConfig:
-          project: ""
-          id: ""
-          location: us-west1
-          platformVersion: ""
-        clusterCredentials:
-          source: Secret
-          secretRef:
-            namespace: default
-            key: kubeconfig
+        forProvider:
+          clusterConfig:
+            project: ""
+            id: ""
+            location: us-west1
+            platformVersion: ""
+          clusterCredentials:
+            source: Secret
+            secretRef:
+              namespace: default
+              key: kubeconfig
     patches:
     - fromFieldPath: spec.parameters.k8sVersion
-      toFieldPath: spec.clusterConfig.platformVersion
+      toFieldPath: spec.forProvider.clusterConfig.platformVersion
       transforms:
       - type: map
         map:
           1.24: 1.24.0-gke.1
           1.25: 1.25.0-gke.2
     - fromFieldPath: status.clusterName
-      toFieldPath: spec.clusterConfig.id
+      toFieldPath: spec.forProvider.clusterConfig.id
     - fromFieldPath: spec.parameters.fleetProject
-      toFieldPath: spec.clusterConfig.project
+      toFieldPath: spec.forProvider.clusterConfig.project
     - fromFieldPath: metadata.uid
-      toFieldPath: spec.clusterCredentials.secretRef.name
+      toFieldPath: spec.forProvider.clusterCredentials.secretRef.name
       transforms:
         - type: string
           string:
             fmt: "%s-ekscluster"
-    readinessChecks:
-    - type: NonEmpty
-      fieldPath: status.succeeded
   - name: attachedCluster
     base:
       apiVersion: containerattached.gcp.gke.cloud.google.com/v1beta1
