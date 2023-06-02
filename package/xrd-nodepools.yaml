@@ -1,3 +1,4 @@
+#example XRD for importing nodepools to existing clusters
 apiVersion: apiextensions.crossplane.io/v1
 kind: CompositeResourceDefinition
 metadata:
