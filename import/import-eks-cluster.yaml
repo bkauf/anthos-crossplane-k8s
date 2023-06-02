@@ -1,0 +1,21 @@
+# Demo of importing existing EKS cluster
+apiVersion:  eks.aws.gke.cloud.google.com/v1beta1
+kind: Cluster
+metadata:
+  name: eks-cluster # edit to match cluster name
+  annotations:
+    crossplane.io/external-name: eks-cluster # edit to match cluster name
+spec:
+  #managementPolicy: ObserveOnly
+  providerConfigRef: 
+    name: default-aws #edit to mach providerConfig
+  forProvider:
+    region: us-east-2  # edit to match cluster region
+    roleArn: arn:aws:iam: #edit to match arn 
+    vpcConfig:
+      - securityGroupIds:
+        -  #add security group 
+        subnetIds:
+        - subnet-1 #add each subnet
+        - subnet-2 
+        - subnet-3
