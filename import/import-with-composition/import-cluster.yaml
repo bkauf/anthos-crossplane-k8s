@@ -9,7 +9,7 @@ spec:
     name: import-gcp-gke
   parameters:
     clusterName: cluster-1 # name of the cluster in given cloud
-    location: us-east-2 # location of the cluster in given cloud
+    location: us-east4 # location of the cluster in given cloud
     #AWS EKS specifics below, leave blank if not using EKS
     securityGroupIds:
     - sg-0fdf036931226edc6 # security group of EKS cluster
