@@ -36,6 +36,19 @@ spec:
                     type: string
                   location:
                     type: string
+                  #AWS Specific
+                  nodeRoleArn:
+                     type: string
+                  desiredSize:
+                    type: integer
+                  maxSize:
+                    type: integer
+                  minSize:
+                    type: integer
+                  subnetIds:
+                    items:
+                      type: string
+                    type: array
                 type: object
           status:
             type: object
