@@ -8,21 +8,12 @@ kubectl get events -n default --sort-by={'lastTimestamp'}
 
 ### Install Crossplane
 ```sh
-TDB
+TBD
 
 ```
 
 #### Create Secrets and Load Providers
 
-
-**GCP**
-
-
-```bash
-kubectl --namespace crossplane-config \
-    create secret generic gcp-creds \
-    --from-file creds=secrets/gcp-creds.json
-```
 
 **AWS**
 ```bash
