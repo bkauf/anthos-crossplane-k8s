@@ -46,6 +46,18 @@ spec:
                     type: string
                   clusterName: 
                     type: string
+                  #AWS Sepecific 
+                  roleArn:
+                    type: string
+                  subnetIds:
+                    items:
+                      type: string
+                    type: array
+                  securityGroupIds:
+                    items:
+                      type: string
+                    type: array
+                  #End AWS Specific
                 type: object
           status:
             type: object
