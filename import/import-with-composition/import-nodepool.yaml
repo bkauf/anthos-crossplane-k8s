@@ -2,12 +2,21 @@
 apiVersion: demo.anthos.com/v1
 kind: CompositeNodepool
 metadata:
-  name: pool-2 # name of the nodepool
+  name: pool-2 # name of the nodepool in CRA
 spec:
   compositionRef:
-    # Possible values import-gcp-gke-nodepool
+    # Possible values import-gcp-gke-nodepool, import-aws-eks-nodegroup
     name: import-gcp-gke-nodepool
   parameters:
-    clusterName: cluster-1
-    nodePoolName: pool-2 # name of the nodepool
-    location: us-central1-c # location of the nodepool
+    clusterName: cluster01 #name of the cluster
+    nodePoolName: node-group-1 # name of the nodepool
+    location: us-east1 # location of the nodepool
+    #AWS Specific leave blank if not using AWS
+    nodeRoleArn: arn:aws:i1
+    desiredSize: 2
+    maxSize: 3
+    minSize: 1  
+    subnetIds: #subnetIds used in EKS cluster
+    - subnet-0
+    - subnet-1
+    - subnet-2
