@@ -28,9 +28,13 @@ spec:
                 properties:
                   clusterName:
                     type: string
+                  nodePoolName:
+                    type: string
                   minNodeCount:
                     type: integer
                   nodeSize:
+                    type: string
+                  location:
                     type: string
                 type: object
           status:
