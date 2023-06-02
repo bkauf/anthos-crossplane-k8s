@@ -11,7 +11,7 @@ spec:
     clusterName: cluster01 #name of the cluster
     nodePoolName: node-group-1 # name of the nodepool
     location: us-east1 # location of the nodepool
-    #AWS Specific leave blank if not using AWS
+    #AWS Specific leave below fields blank if not using AWS
     nodeRoleArn: arn:aws:i1
     desiredSize: 2
     maxSize: 3
