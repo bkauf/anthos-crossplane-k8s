@@ -1,0 +1,22 @@
+#example of importing an EKS nodegroup
+apiVersion: eks.aws.gke.cloud.google.com/v1beta1
+kind: NodeGroup
+metadata:
+  name: eks-ng
+  annotations:
+    crossplane.io/external-name: nodegroup-1 # edit to match nodegroup name
+spec:
+  providerConfigRef: 
+    name: default-aws
+  forProvider:
+    clusterName: eks-cluster
+    nodeRoleArn: arn:aws:xyz
+    region: us-east-2
+    scalingConfig: 
+      - desiredSize: 2
+        maxSize: 3
+        minSize: 1
+    subnetIds:
+        - subnet-0
+        - subnet-1
+        - subnet-2
