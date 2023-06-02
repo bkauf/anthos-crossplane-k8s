@@ -1,0 +1,13 @@
+#Demo of importing a node pool into a given composition 
+apiVersion: demo.anthos.com/v1
+kind: CompositeNodepool
+metadata:
+  name: pool-2 # name of the nodepool
+spec:
+  compositionRef:
+    # Possible values import-gcp-gke-nodepool
+    name: import-gcp-gke-nodepool
+  parameters:
+    clusterName: cluster-1
+    nodePoolName: pool-2 # name of the nodepool
+    location: us-central1-c # location of the nodepool
