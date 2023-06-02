@@ -1,0 +1,62 @@
+#example of importing and EKS cluster via composition
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: import-aws-eks
+  labels:
+    crossplane.io/xrd: compositeclusters.demo.anthos.com
+    provider: aws
+    cluster: eks
+spec:
+  compositeTypeRef:
+    apiVersion: demo.anthos.com/v1
+    kind:  CompositeCluster
+  patchSets:
+  - name: metadata
+    patches:
+    - fromFieldPath: metadata.labels
+  resources:
+  - name: cluster
+    base:
+      apiVersion:  eks.aws.gke.cloud.google.com/v1beta1
+      kind: Cluster
+      metadata:
+        name: eks-cluster # edit to match cluster name
+        annotations:
+          crossplane.io/external-name: eks-cluster # edit to match cluster name
+      spec:
+        #managementPolicy: ObserveOnly # uncomment to block any changes made to resource
+        providerConfigRef: 
+          name: default-aws #edit to mach providerConfig
+        forProvider:
+          region: us-east-2  # edit to match cluster region
+          roleArn: arn:aws:iam #edit to match arn 
+          vpcConfig:
+            - securityGroupIds:
+              -  sg-0123
+              subnetIds:
+              - subnet-1 #add each subnet
+              - subnet-2 
+              - subnet-3
+    patches:
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.clusterName
+      toFieldPath: metadata.annotations[crossplane.io/external-name]
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.location
+      toFieldPath: spec.forProvider.region
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.roleArn
+      toFieldPath: spec.forProvider.roleArn 
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.securityGroupIds
+      toFieldPath: spec.forProvider.vpcConfig[0].securityGroupIds
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.subnetIds
+      toFieldPath: spec.forProvider.vpcConfig[0].subnetIds
+    - type: ToCompositeFieldPath
+      fromFieldPath: status.atProvider.status
+      toFieldPath: status.controlPlaneStatus
+    - type: ToCompositeFieldPath
+      fromFieldPath: spec.forProvider.region
+      toFieldPath: status.region
