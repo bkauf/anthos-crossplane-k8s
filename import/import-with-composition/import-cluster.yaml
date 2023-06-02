@@ -1,12 +1,20 @@
-#Demo of importing a GKE cluster into a given composition 
+#Demo of importing a cluster into a given composition 
 apiVersion: demo.anthos.com/v1
 kind: CompositeCluster 
 metadata:
-  name: cluster-1 # name of the cluster in GCP
+  name: cluster-1 # name to call the cluster in Cloud Resource Accelerator
 spec:
   compositionRef:
-    # Possible values import-gcp-gke
+    # Possible values import-gcp-gke, import-aws-eks
     name: import-gcp-gke
   parameters:
-    clusterName: cluster-1 # name of the cluster in GCP
-    location: us-central1-c # location of the cluster in GCP
+    clusterName: cluster-1 # name of the cluster in given cloud
+    location: us-east-2 # location of the cluster in given cloud
+    #AWS EKS specifics below, leave blank if not using EKS
+    securityGroupIds:
+    - sg-0fdf036931226edc6 # security group of EKS cluster
+    roleArn: arn:aws:iam: # role of cluster
+    subnetIds: #subnetIds used in EKS cluster
+    - subnet-1 
+    - subnet-2
+    - subnet-3
