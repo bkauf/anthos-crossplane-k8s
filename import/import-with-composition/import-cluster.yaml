@@ -8,6 +8,7 @@ spec:
     # Possible values import-gcp-gke, import-aws-eks
     name: import-gcp-gke
   parameters:
+    #managementPolicy: ObserveOnly #Uncomment if you would only like to oberve resource, FullControl is default
     clusterName: cluster-1 # name of the cluster in given cloud
     location: us-east4 # location of the cluster in given cloud
     #AWS EKS specifics below, leave blank if not using EKS
