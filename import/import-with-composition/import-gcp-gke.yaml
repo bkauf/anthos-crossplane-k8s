@@ -1,3 +1,4 @@
+#example compoistoin to import a GKE on GCP cluster
 apiVersion: apiextensions.crossplane.io/v1
 kind: Composition
 metadata:
@@ -21,16 +22,18 @@ spec:
       kind: Cluster
       metadata:
         annotations:
-          crossplane.io/external-name: gkehub/v1beta1/membership
+          crossplane.io/external-name: cluster
       spec:
         providerConfigRef: 
           name: default-gcp
         forProvider:
-          location: us-central1-a
-          #minMasterVersion: 1.26.2-gke.1000 # edit to match desired version to demo upgrading all clusters
-          #nodeVersion: 1.26.2-gke.1000 # edit to match desired version to demo upgrading all clusters
-
+          location: us-central1-c
+        #  minMasterVersion: 1.26.2-gke.1000 # edit to match desired version to demo upgrading all clusters
+        # nodeVersion: 1.26.2-gke.1000 # edit to match desired version to demo upgrading all clusters
     patches:
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.managementPolicy
+      toFieldPath: spec.managementPolicy
     - type: FromCompositeFieldPath
       fromFieldPath: spec.parameters.clusterName
       toFieldPath: metadata.annotations[crossplane.io/external-name]
