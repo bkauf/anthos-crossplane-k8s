@@ -8,6 +8,7 @@ spec:
     # Possible values import-gcp-gke-nodepool, import-aws-eks-nodegroup
     name: import-gcp-gke-nodepool
   parameters:
+    #managementPolicy: ObserveOnly #Uncomment if you would only like to oberve resource, FullControl is default
     clusterName: cluster01 #name of the cluster
     nodePoolName: node-group-1 # name of the nodepool
     location: us-east1 # location of the nodepool
