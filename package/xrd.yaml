@@ -1,3 +1,4 @@
+#Sample XRD for K8s Clusters
 apiVersion: apiextensions.crossplane.io/v1
 kind: CompositeResourceDefinition
 metadata:
@@ -26,6 +27,9 @@ spec:
               parameters:
                 description: AttachedClusterParameters is the cluster configs.
                 properties:
+                  managementPolicy:
+                      type: string
+                      default: FullControl #ObserveOnly 
                   adminUsers:
                     items:
                       type: string
