@@ -40,6 +40,9 @@ spec:
               - subnet-3
     patches:
     - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.managementPolicy
+      toFieldPath: spec.managementPolicy
+    - type: FromCompositeFieldPath
       fromFieldPath: spec.parameters.clusterName
       toFieldPath: metadata.annotations[crossplane.io/external-name]
     - type: FromCompositeFieldPath
