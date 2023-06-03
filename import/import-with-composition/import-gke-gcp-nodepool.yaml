@@ -22,27 +22,25 @@ spec:
       kind: NodePool
       metadata:
         annotations:
-          crossplane.io/external-name: gkehub/v1beta1/membership
+          crossplane.io/external-name: pool-2
       spec:
         providerConfigRef: 
           name: default-gcp
         forProvider:
-          cluster: gke-cluster
-          clusterRef:
-            name: gke-cluster
-        #  minMasterVersion: 1.26.2-gke.1000 # edit to match desired version to demo upgrading all clusters
-        # nodeVersion: 1.26.2-gke.1000 # edit to match desired version to demo upgrading all clusters
-
+          cluster: test-cluster
     patches:
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.managementPolicy
+      toFieldPath: spec.managementPolicy
     - type: FromCompositeFieldPath
       fromFieldPath: spec.parameters.nodePoolName
       toFieldPath: metadata.annotations[crossplane.io/external-name]
     - type: FromCompositeFieldPath
       fromFieldPath: spec.parameters.clusterName
-      toFieldPath: spec.forProvider.clusterRef.name
-    - type: FromCompositeFieldPath
-      fromFieldPath: spec.parameters.clusterName
       toFieldPath: spec.forProvider.cluster
-    # - type: FromCompositeFieldPath
-    #   fromFieldPath: spec.parameters.location
-    #   toFieldPath: spec.forProvider.location 
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.location
+      toFieldPath: spec.forProvider.nodeLocations[0]
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.location
+      toFieldPath: spec.forProvider.location
