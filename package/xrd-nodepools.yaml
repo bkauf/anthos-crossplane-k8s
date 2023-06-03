@@ -1,4 +1,4 @@
-#example XRD for importing nodepools to existing clusters
+#example XRD for nodepools
 apiVersion: apiextensions.crossplane.io/v1
 kind: CompositeResourceDefinition
 metadata:
@@ -27,6 +27,9 @@ spec:
               parameters:
                 description: "Parameters for creating a new node pool"
                 properties:
+                  managementPolicy:
+                    type: string
+                    default: FullControl #ObserveOnly
                   clusterName:
                     type: string
                   nodePoolName:
