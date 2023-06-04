@@ -1,4 +1,4 @@
-#Example of importing a GKE  node pool into a composition 
+#Example of importing a GKE node pool into a composition 
 apiVersion: apiextensions.crossplane.io/v1
 kind: Composition
 metadata:
