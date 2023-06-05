@@ -2,14 +2,13 @@ apiVersion: demo.anthos.com/v1
 kind: NodePool
 metadata:
   name: test-nodepool
-  labels:
-    cluster-owner: bkauf
 spec:
   compositionRef:
     # Possible values gcp-node-pool
     name: gcp-gke-nodepool
   parameters:
-    clusterName: "upbound-cluster-m6str"
+    clusterName: "cluster-1"
+    location: "us-central1-c"	
     # Possible values small, medium, large
     nodeSize: medium
     minNodeCount: 1
