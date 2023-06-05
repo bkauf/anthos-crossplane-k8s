@@ -1,19 +1,21 @@
 apiVersion: demo.anthos.com/v1
 kind: CompositeCluster 
 metadata:
-  name: test-cluster
+  name: gke-cluster
 spec:
   compositionRef:
     # Possible values cluster-gcp-gke, cluster-aws-eks, cluster-azure-aks
     name: cluster-aws-eks
   parameters:
-    # Possible values small, medium, large
-    nodeSize: medium
+    location: "us-central-1c"
+    nodeSize: medium  # Possible values small, medium, large
     k8sVersion: "1.25"
-    fleetProject: "261832825633"
+    fleetProject: "111111111"
     minNodeCount: 2
     adminUsers:
     - bkauf@google.com  
+     #Azure Specific 
+    resourceGroup: abc
   writeConnectionSecretToRef:
     namespace: default
     name: b-team
