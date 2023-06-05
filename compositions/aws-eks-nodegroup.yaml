@@ -52,7 +52,7 @@ spec:
       fromFieldPath: spec.parameters.maxSize
       toFieldPath: spec.forProvider.scalingConfig[0].maxSize
     - type: FromCompositeFieldPath
-      fromFieldPath: spec.parameters.minSize 
+      fromFieldPath: spec.parameters.minNodeCount 
       toFieldPath: spec.forProvider.scalingConfig[0].minSize   
     - type: FromCompositeFieldPath
       fromFieldPath: spec.parameters.subnetIds
