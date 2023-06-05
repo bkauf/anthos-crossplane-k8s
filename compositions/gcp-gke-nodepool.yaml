@@ -1,3 +1,4 @@
+#example GKE on GCP node pool creation
 apiVersion: apiextensions.crossplane.io/v1
 kind: Composition
 metadata:
@@ -21,28 +22,26 @@ spec:
       kind: NodePool
       metadata:
         annotations:
-          meta.upbound.io/example-id: container/v1beta1/nodepool
-        #labels:
-        #  testing.upbound.io/example-name: nodepool
       spec:
         providerConfigRef: 
           name: default-gcp
-          clusterRef:
-            name: test-cluster
-          location: us-central1-a
+        forProvider:
+          cluster: test-cluster
+          #version: 1.25
           nodeConfig:
             - machineType: e2-medium
               oauthScopes:
                 - https://www.googleapis.com/auth/cloud-platform
               serviceAccount: 261832825633-compute@developer.gserviceaccount.com
-              nodeLocations: 
-                - us-central1-a
     patches:
+    - fromFieldPath: spec.parameters.clusterName
+      toFieldPath: spec.forProvider.cluster
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.location
+      toFieldPath: spec.forProvider.location
     - type: FromCompositeFieldPath
       fromFieldPath: spec.parameters.minNodeCount
       toFieldPath: spec.forProvider.nodeCount
-    - fromFieldPath: spec.parameters.clusterName
-      toFieldPath: spec.forProvider.clusterRef.name
     - fromFieldPath: spec.parameters.nodeSize
       toFieldPath: spec.forProvider.nodeConfig[0].machineType
       transforms:
