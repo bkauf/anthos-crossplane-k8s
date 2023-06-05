@@ -1,3 +1,4 @@
+#example creating a GKE on GCP cluster and node pool 
 apiVersion: apiextensions.crossplane.io/v1
 kind: Composition
 metadata:
@@ -19,29 +20,25 @@ spec:
     base:
       apiVersion: container.gcp.gke.cloud.google.com/v1beta1
       kind: Cluster
-      metadata:
-        annotations:
-          meta.upbound.io/example-id: gkehub/v1beta1/membership
-        labels:
-          testing.upbound.io/example-name: gke-cluster
+      metadata:  
       spec:
         providerConfigRef: 
           name: default-gcp
         forProvider:
           initialNodeCount: 1
           location: us-central1-a
-          version: 1.27
+          version: 1.26
           removeDefaultNodePool: true
     patches:
     - type: FromCompositeFieldPath
       fromFieldPath: spec.parameters.k8sVersion
       toFieldPath: spec.forProvider.minMasterVersion
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.location
+      toFieldPath: spec.forProvider.location
     - type: ToCompositeFieldPath
       fromFieldPath: metadata.annotations[crossplane.io/external-name]
       toFieldPath: status.clusterName
-    - type: ToCompositeFieldPath
-      fromFieldPath: spec.forProvider.location
-      toFieldPath: status.region  
     - type: ToCompositeFieldPath
       fromFieldPath: status.atProvider.masterVersion
       toFieldPath: status.version  
@@ -56,23 +53,17 @@ spec:
       kind: NodePool
       metadata:
         annotations:
-          meta.upbound.io/example-id: container/v1beta1/nodepool
-        labels:
-          testing.upbound.io/example-name: nodepool
       spec:
         providerConfigRef: 
           name: default-gcp
         forProvider:
           clusterSelector:
             matchControllerRef: true
-            # matchLabels:
-            #   testing.upbound.io/example-name: gke-cluster
           location: us-central1-a
           nodeConfig:
             - machineType: e2-medium
               oauthScopes:
                 - https://www.googleapis.com/auth/cloud-platform
-              serviceAccount: 261832825633-compute@developer.gserviceaccount.com
               nodeLocations: 
                 - us-central1-a
     patches:
@@ -80,11 +71,8 @@ spec:
       fromFieldPath: spec.parameters.minNodeCount
       toFieldPath: spec.forProvider.nodeCount
     - type: FromCompositeFieldPath
-      fromFieldPath: status.clusterName
-      toFieldPath: spec.forProvider.cluster
-    - type: ToCompositeFieldPath
-      fromFieldPath: status.atProvider.status
-      toFieldPath: status.nodePoolStatus
+      fromFieldPath: spec.parameters.location
+      toFieldPath: spec.forProvider.nodeConfig[0].nodeLocations[0]
     - fromFieldPath: spec.parameters.nodeSize
       toFieldPath: spec.forProvider.nodeConfig[0].machineType
       transforms:
@@ -93,3 +81,6 @@ spec:
             small: e2-small
             medium: e2-medium
             large: e2-standard-2
+    - type: ToCompositeFieldPath
+      fromFieldPath: status.atProvider.status
+      toFieldPath: status.nodePoolStatus
