@@ -49,8 +49,6 @@ spec:
                     type: integer
                   maxSize:
                     type: integer
-                  minSize:
-                    type: integer
                   subnetIds:
                     items:
                       type: string
