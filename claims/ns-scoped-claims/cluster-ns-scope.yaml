@@ -1,9 +1,9 @@
 apiVersion: demo.anthos.com/v1
 kind: Cluster
 metadata:
-  name: test-gke-cluster3
+  name: gke-cluster
   labels:
-    cluster-owner: bkauf
+    cluster-owner: abc
 spec:
   compositionRef:
       # Possible values cluster-gcp-gke, cluster-aws-eks, cluster-azure-aks
@@ -12,7 +12,9 @@ spec:
     # Possible values small, medium, large
     nodeSize: small
     k8sVersion: "1.24"
-    fleetProject: "261832825633"
+    fleetProject: "111111"
     minNodeCount: 2
     adminUsers:
-    - bkauf@google.com
+    - example@google.com
+    #Azure Specific 
+    resourceGroup: abc
