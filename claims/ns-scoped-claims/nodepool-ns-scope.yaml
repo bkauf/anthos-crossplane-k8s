@@ -18,7 +18,6 @@ spec:
     nodeRoleArn: arn:aws:iam:: # nodeRoleArn
     desiredSize: 2
     maxSize: 3
-    minSize: 1 
     subnetIds: #subnetIds used in EKS cluster
     - subnet-0
     - subnet-1
