@@ -25,7 +25,6 @@ spec:
         annotations:
           crossplane.io/external-name: eks-cluster # edit to match cluster name
       spec:
-        #managementPolicy: ObserveOnly # uncomment to block any changes made to resource
         providerConfigRef: 
           name: default-aws #edit to mach providerConfig
         forProvider:
