@@ -1,14 +1,26 @@
+#example claim to build a node pool/group
 apiVersion: demo.anthos.com/v1
 kind: NodePool
 metadata:
   name: test-nodepool
 spec:
   compositionRef:
-    # Possible values gcp-node-pool
-    name: gcp-gke-nodepool
+    # Possible values gcp-node-pool, aws-eks-nodegroup
+    name: gcp-node-pool
   parameters:
+    # managementPolicy: ObserveOnly
     clusterName: "cluster-1"
-    location: "us-central1-c"	
+    location: "us-east4"	
     # Possible values small, medium, large
     nodeSize: medium
     minNodeCount: 1
+    #AWS EKS specifics below, leave blank if not using EKS
+    nodeRoleArn: arn:aws:iam:: # nodeRoleArn
+    desiredSize: 2
+    maxSize: 3
+    minSize: 1 
+    subnetIds: #subnetIds used in EKS cluster
+    - subnet-0
+    - subnet-1
+    - subnet-2
+  
