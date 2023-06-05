@@ -1,0 +1,70 @@
+#example EKS on AWS nodegroup 
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: aws-eks-nodegroup
+  labels:
+    crossplane.io/xrd: compositenodepools.demo.anthos.com
+    provider: aws
+    cluster: eks
+spec:
+  compositeTypeRef:
+    apiVersion: demo.anthos.com/v1
+    kind:  CompositeNodepool
+  patchSets:
+  - name: metadata
+    patches:
+    - fromFieldPath: metadata.labels
+  resources:
+  - name: nodegroup
+    base:
+      apiVersion: eks.aws.gke.cloud.google.com/v1beta1
+      kind: NodeGroup
+      metadata:
+        name: eks-ng
+      spec:
+        providerConfigRef: 
+          name: default-aws
+        forProvider:
+          region: us-east-1
+          scalingConfig:
+            - desiredSize: 1
+              maxSize: 6
+              minSize: 1
+          subnetIdSelector:
+            matchControllerRef: true
+            matchLabels: 
+              role: nodegroup
+    patches:
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.clusterName
+      toFieldPath: spec.forProvider.clusterName
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.nodeRoleArn
+      toFieldPath: spec.forProvider.nodeRoleArn
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.location
+      toFieldPath: spec.forProvider.region
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.desiredSize
+      toFieldPath: spec.forProvider.scalingConfig[0].desiredSize
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.maxSize
+      toFieldPath: spec.forProvider.scalingConfig[0].maxSize
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.minSize 
+      toFieldPath: spec.forProvider.scalingConfig[0].minSize   
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.subnetIds
+      toFieldPath: spec.forProvider.subnetIds
+    - fromFieldPath: spec.parameters.nodeSize
+      toFieldPath: spec.forProvider.instanceTypes[0]
+      transforms:
+      - type: map
+        map:
+          small: t3.small
+          medium: t3.medium
+          large: t3.large
+    - type: ToCompositeFieldPath
+      fromFieldPath: status.atProvider.status
+      toFieldPath: status.nodePoolStatus
