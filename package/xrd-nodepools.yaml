@@ -32,6 +32,8 @@ spec:
                     default: FullControl #ObserveOnly
                   clusterName:
                     type: string
+                  location:
+                    type: string
                   nodePoolName:
                     type: string
                   minNodeCount:
