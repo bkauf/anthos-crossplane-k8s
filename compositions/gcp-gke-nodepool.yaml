@@ -35,6 +35,9 @@ spec:
               serviceAccount: 261832825633-compute@developer.gserviceaccount.com
     patches:
     - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.nodePoolName
+      toFieldPath: metadata.annotations[crossplane.io/external-name]
+    - type: FromCompositeFieldPath
       fromFieldPath: spec.parameters.clusterName
       toFieldPath: spec.forProvider.cluster
     - type: FromCompositeFieldPath
