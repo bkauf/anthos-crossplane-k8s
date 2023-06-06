@@ -1,4 +1,3 @@
-#example composition for an Azure AKS cluster
 apiVersion: apiextensions.crossplane.io/v1
 kind: Composition
 metadata:
@@ -23,6 +22,7 @@ spec:
       metadata:
         labels:
           role: controlplane
+       # name: akscluster
       spec:
         providerConfigRef: 
           name: default-azure
@@ -38,6 +38,9 @@ spec:
           resourceGroupName: xyz
           kubernetesVersion: "1.25"
     patches:
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.clusterName
+      toFieldPath: metadata.annotations[crossplane.io/external-name]
     - type: FromCompositeFieldPath
       fromFieldPath: spec.parameters.k8sVersion
       toFieldPath: spec.forProvider.kubernetesVersion
@@ -61,6 +64,3 @@ spec:
     - type: ToCompositeFieldPath
       fromFieldPath: spec.forProvider.location
       toFieldPath: status.region
-    - type: ToCompositeFieldPath
-      fromFieldPath: status.conditions.status
-      toFieldPath: status.controlPlaneStatus
