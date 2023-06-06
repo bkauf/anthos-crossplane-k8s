@@ -1,0 +1,47 @@
+#example of creating a node pool for an AKS cluster
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: azure-aks-nodepool
+  labels:
+    crossplane.io/xrd: compositenodepools.demo.anthos.com
+    provider: azure
+    cluster: aks
+spec:
+  compositeTypeRef:
+    apiVersion: demo.anthos.com/v1
+    kind:  CompositeNodepool
+  patchSets:
+  - name: metadata
+    patches:
+    - fromFieldPath: metadata.labels
+  resources:
+  - name: aksnodegroup
+    base:
+      apiVersion: containerservice.azure.gke.cloud.google.com/v1beta1
+      kind: KubernetesClusterNodePool
+      spec:
+        providerConfigRef:
+          name: default-azure
+        forProvider:
+          kubernetesClusterIdRef: 
+            name: aks-cluster
+          vmSize: Standard_DS2_v2
+    patches:
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.nodePoolName
+      toFieldPath: metadata.annotations[crossplane.io/external-name]
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.clusterName
+      toFieldPath: spec.forProvider.kubernetesClusterIdRef.name
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.minNodeCount
+      toFieldPath: spec.forProvider.nodeCount
+    - fromFieldPath: spec.parameters.nodeSize
+      toFieldPath: spec.forProvider.vmSize
+      transforms:
+        - type: map
+          map:
+            small: Standard_D2_v2
+            medium: Standard_B4ms
+            large: Standard_D8s_v3
