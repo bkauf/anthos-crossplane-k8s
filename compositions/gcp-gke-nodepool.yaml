@@ -1,55 +1,21 @@
-#example of GKE on GCP with composition
+#example GKE on GCP node pool creation
 apiVersion: apiextensions.crossplane.io/v1
 kind: Composition
 metadata:
-  name: cluster-gcp-gke
+  name: gcp-gke-nodepool
   labels:
-    crossplane.io/xrd: compositeclusters.demo.anthos.com
+    crossplane.io/xrd: compositenodepools.demo.anthos.com
     provider: gcp
     cluster: gke
 spec:
   compositeTypeRef:
     apiVersion: demo.anthos.com/v1
-    kind:  CompositeCluster
+    kind:  CompositeNodepool
   patchSets:
   - name: metadata
     patches:
     - fromFieldPath: metadata.labels
   resources:
-  - name: cluster
-    base:
-      apiVersion: container.gcp.gke.cloud.google.com/v1beta1
-      kind: Cluster
-      metadata:  
-      spec:
-        providerConfigRef: 
-          name: default-gcp
-        forProvider:
-          initialNodeCount: 1
-          location: us-central1-a
-          version: 1.26
-          removeDefaultNodePool: true
-    patches:
-    - type: FromCompositeFieldPath
-      fromFieldPath: spec.parameters.clusterName
-      toFieldPath: metadata.annotations[crossplane.io/external-name]
-    - type: FromCompositeFieldPath
-      fromFieldPath: spec.parameters.k8sVersion
-      toFieldPath: spec.forProvider.minMasterVersion
-    - type: FromCompositeFieldPath
-      fromFieldPath: spec.parameters.location
-      toFieldPath: spec.forProvider.location
-    - type: ToCompositeFieldPath
-      fromFieldPath: metadata.annotations[crossplane.io/external-name]
-      toFieldPath: status.clusterName
-    - type: ToCompositeFieldPath
-      fromFieldPath: status.atProvider.masterVersion
-      toFieldPath: status.version  
-    - fromFieldPath: status.atProvider.location
-      toFieldPath: status.region
-    - type: ToCompositeFieldPath
-      fromFieldPath: status.atProvider.status
-      toFieldPath: status.controlPlaneStatus
   - name: nodepool
     base:
       apiVersion: container.gcp.gke.cloud.google.com/v1beta1
@@ -60,22 +26,23 @@ spec:
         providerConfigRef: 
           name: default-gcp
         forProvider:
-          clusterSelector:
-            matchControllerRef: true
-          location: us-central1-a
+          cluster: test-cluster
+          #version: 1.25
           nodeConfig:
             - machineType: e2-medium
               oauthScopes:
                 - https://www.googleapis.com/auth/cloud-platform
-              nodeLocations: 
-                - us-central1-a
+              serviceAccount: 261832825633-compute@developer.gserviceaccount.com
     patches:
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.clusterName
+      toFieldPath: spec.forProvider.cluster
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.location
+      toFieldPath: spec.forProvider.location
     - type: FromCompositeFieldPath
       fromFieldPath: spec.parameters.minNodeCount
       toFieldPath: spec.forProvider.nodeCount
-    - type: FromCompositeFieldPath
-      fromFieldPath: spec.parameters.location
-      toFieldPath: spec.forProvider.nodeConfig[0].nodeLocations[0]
     - fromFieldPath: spec.parameters.nodeSize
       toFieldPath: spec.forProvider.nodeConfig[0].machineType
       transforms:
@@ -84,6 +51,3 @@ spec:
             small: e2-small
             medium: e2-medium
             large: e2-standard-2
-    - type: ToCompositeFieldPath
-      fromFieldPath: status.atProvider.status
-      toFieldPath: status.nodePoolStatus
