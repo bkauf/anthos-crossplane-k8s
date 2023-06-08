@@ -1,2 +1,3 @@
 .envrc
-credentials/*
+secrets/*.json
+secrets/*.conf

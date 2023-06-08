@@ -63,14 +63,15 @@ Create a secrets file with owner permissions
    az ad sp create-for-rbac \
 --sdk-auth \
 --role Owner \
---scopes /subscriptions/$subId
+--scopes /subscriptions/$subId/resourceGroups/$resourceGroup
 ```
 Apply Secret and load provider configs
 ```bash
+kubectl create namespace crossplane-config 
 kubectl --namespace crossplane-config \
     create secret generic azure-creds \
     --from-file creds=secrets/azure-creds.json
-kubectl apply -f providers/azure.yaml
+kubectl apply -f providers/azure-providerconfig.yaml
 
 ```
 
