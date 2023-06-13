@@ -7,9 +7,28 @@ kubectl get events -n default --sort-by={'lastTimestamp'}
 ```
 
 ### Install Crossplane
-```sh
-TBD
 
+Enable the Crossplane Helm Chart repository:
+```sh
+helm repo add crossplane-stable https://charts.crossplane.io/stable
+helm repo update
+```
+Install the Crossplane Components using helm install
+```sh
+helm install crossplane \
+--namespace crossplane-system \
+--create-namespace crossplane-stable/crossplane \
+--set image.pullPolicy=Always
+```
+Verify Crossplane installed with kubectl get pods, until all pods are running.
+```sh
+kubectl get pods -n crossplane-system
+kubectl get deployments -n crossplane-system
+```
+
+Installing Crossplane creates new Kubernetes API end-points. Look at the new API end-points with kubectl api-resources | grep crossplane.
+```sh
+kubectl api-resources  | grep crossplane
 ```
 
 #### Create Secrets and Load Providers
@@ -44,14 +63,15 @@ Create a secrets file with owner permissions
    az ad sp create-for-rbac \
 --sdk-auth \
 --role Owner \
---scopes /subscriptions/$subId
+--scopes /subscriptions/$subId/resourceGroups/$resourceGroup
 ```
 Apply Secret and load provider configs
 ```bash
+kubectl create namespace crossplane-config 
 kubectl --namespace crossplane-config \
     create secret generic azure-creds \
     --from-file creds=secrets/azure-creds.json
-kubectl apply -f providers/azure.yaml
+kubectl apply -f providers/azure-providerconfig.yaml
 
 ```
 

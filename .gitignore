@@ -1,0 +1,3 @@
+.envrc
+secrets/*.json
+secrets/*.conf
